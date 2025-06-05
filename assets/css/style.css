@@ -1,0 +1,267 @@
+/* 基础样式 */
+:root {
+    --primary: #3498db;
+    --secondary: #2ecc71;
+    --danger: #e74c3c;
+    --dark: #2c3e50;
+    --light: #ecf0f1;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* 导航栏 */
+.navbar {
+    background-color: var(--dark);
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* 活动卡片 */
+.event-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+}
+
+.event-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.event-info {
+    padding: 1.5rem;
+}
+
+.price-range {
+    color: var(--primary);
+    font-weight: bold;
+}
+
+/* 价格表 */
+.pricing-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+
+.pricing-table th,
+.pricing-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.pricing-table th {
+    background-color: var(--dark);
+    color: white;
+}
+
+.pricing-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* 按钮样式 */
+.btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #2980b9;
+}
+
+.btn-danger {
+    background: var(--danger);
+}
+
+.btn-success {
+    background: var(--secondary);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .pricing-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .event-card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* ---------- */
+/* 水平导航栏样式 */
+.horizontal-nav .navbar {
+    background-color: var(--dark);
+    padding: 0.5rem 0;
+}
+
+.horizontal-nav .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.horizontal-nav .nav-item {
+    margin: 0 0.5rem;
+}
+
+.horizontal-nav .dropdown-menu {
+    position: absolute;
+}
+
+/* 页脚水平导航 */
+.horizontal-footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.horizontal-footer-nav li {
+    margin-right: 1rem;
+}
+
+/* 响应式调整 */
+@media (max-width: 992px) {
+    .horizontal-nav .navbar-collapse {
+        padding-top: 1rem;
+    }
+
+    .horizontal-nav .navbar-nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .horizontal-nav .nav-item {
+        margin: 0.25rem 0;
+        width: 100%;
+    }
+
+    .horizontal-footer-nav {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+/* 活动状态指示 */
+.nav-link.active {
+    font-weight: bold;
+    position: relative;
+}
+
+.nav-link.active:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #fff;
+}
+
+/* 下拉菜单动画 */
+.dropdown-menu {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 模态框样式增强 */
+.modal-content {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background-color: var(--primary);
+    color: white;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding-top: 0;
+}
+
+/* 表单样式 */
+.modal-body .form-control {
+    padding: 0.75rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.modal-body .form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 链接样式 */
+.modal-body a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.modal-body a:hover {
+    text-decoration: underline;
+}
+
+/* 响应式调整 */
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem auto;
+    }
+
+    .modal-content {
+        border-radius: 0;
+    }
+}
+
+/* 切换模态框动画 */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+/* 错误提示 */
+.alert {
+    margin-bottom: 1rem;
+}

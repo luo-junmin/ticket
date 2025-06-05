@@ -1,0 +1,50 @@
+/var/www/html/ticketing-system/
+├── assets/
+│   ├── css/
+│   │   ├── style.css
+│   │   └── print.css
+│   ├── js/
+│   │   ├── main.js
+│   │   └── qrcode.min.js
+│   ├── images/
+│   │   ├── logo.png
+│   │   ├── paynow-logo.png
+│   │   └── visa-mastercard.png
+│   └── qrcodes/ (will be created by system)
+├── config/
+│   ├── database.php
+│   └── config.php
+├── classes/
+│   ├── Database.php
+│   ├── User.php
+│   ├── Event.php
+│   ├── Ticket.php
+│   ├── Payment.php
+│   └── Language.php
+├── includes/
+│   ├── header.php
+│   ├── footer.php
+│   └── auth_check.php
+├── api/
+│   ├── events.php
+│   ├── tickets.php
+│   └── payment.php
+├── index.php
+├── event.php
+├── booking.php
+├── payment.php
+├── login.php
+├── register.php
+├── account.php
+├── ticket.php
+├── verify.php
+├── admin/
+│   ├── events/
+│   │   ├── index.php
+│   │   ├── add.php
+│   │   └── edit.php
+│   ├── tickets/
+│   │   └── sales.php
+│   └── index.php
+├── composer.json
+└── README.md

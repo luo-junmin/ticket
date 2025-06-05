@@ -1,0 +1,27 @@
+#RewriteEngine On
+#RewriteBase /
+#
+## Frontend rewrites
+#RewriteRule ^event/([0-9]+)/?$ event.php?id=$1 [L,QSA]
+#RewriteRule ^book/([0-9]+)/([0-9]+)/?$ booking.php?event_id=$1&zone_id=$2 [L,QSA]
+#RewriteRule ^ticket/([0-9]+)/?$ ticket.php?order_id=$1 [L,QSA]
+#RewriteRule ^verify/?$ verify.php [L,QSA]
+#
+## Admin rewrites
+#RewriteRule ^admin/events/?$ admin/events/index.php [L,QSA]
+#RewriteRule ^admin/events/edit/([0-9]+)/?$ admin/events/edit.php?id=$1 [L,QSA]
+#RewriteRule ^admin/tickets/?$ admin/tickets/index.php [L,QSA]
+#
+## API endpoints
+#RewriteRule ^api/events/?$ api/events.php [L,QSA]
+#RewriteRule ^api/tickets/verify/?$ api/tickets.php?action=verify [L,QSA]
+#
+## Security - deny access to certain files
+#<FilesMatch "\.(env|log|htaccess)$">
+#    Order allow,deny
+#    Deny from all
+#</FilesMatch>
+#
+## PHP settings
+#php_value upload_max_filesize 10M
+#php_value post_max_size 12M
