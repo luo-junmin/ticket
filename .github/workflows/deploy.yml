@@ -18,7 +18,7 @@ jobs:
         with:
           host: smilesrus.dental
           username: root
-          password: ${{ secrets.SERVER_PASSWORD1 }}  # 建议按服务器单独命名密钥
+          password: ${{ secrets.SERVER_PASSWORD2 }}  # 建议按服务器单独命名密钥
           port: 22  # 显式指定SSH端口
           target: /var/www/smilesrus/ticket
           source: "./**"
