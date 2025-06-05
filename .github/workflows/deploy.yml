@@ -22,7 +22,7 @@ jobs:
           # password: ${{ secrets.SSH_PRIVATE_KEY }}  # 建议按服务器单独命名密钥
           # port: 22  # 显式指定SSH端口
           target: /var/www/smilesrus/ticket
-          source: "./**"
+          source: ./
           rm: true  # 清空目标目录后再上传
           overwrite: true  # 强制覆盖同名文件
 
@@ -43,6 +43,6 @@ jobs:
           # password: ${{ secrets.SSH_PRIVATE_KEY }}
           # port: 22
           target: /var/www/tenglong/ticket
-          source: "./**"
+          source: ./
           rm: true
           overwrite: true
