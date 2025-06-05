@@ -1,6 +1,4 @@
 <?php
-//require_once 'includes/config.php';
-//require_once 'includes/header.php';
 //require_once 'includes/auth.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/config/config.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/autoload.php';
