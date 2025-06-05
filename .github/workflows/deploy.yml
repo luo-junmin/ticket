@@ -1,0 +1,46 @@
+name: Deploy Ticket System
+
+on:
+  push:
+    branches:
+      - master  # 或改为你的主分支名称（如 main）
+
+jobs:
+  deploy_to_server1:
+    name: Deploy to Server 1 (smilesrus.dental)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  # 使用最新版
+
+      - name: Upload via SCP
+        uses: appleboy/scp-action@v0.0.5
+        with:
+          host: smilesrus.dental
+          username: root
+          password: ${{ secrets.SERVER_PASSWORD1 }}  # 建议按服务器单独命名密钥
+          port: 22  # 显式指定SSH端口
+          target: /var/www/smilesrus/ticket
+          source: "./**"
+          rm: true  # 清空目标目录后再上传
+          overwrite: true  # 强制覆盖同名文件
+
+  deploy_to_server2:
+    name: Deploy to Server 2 (tenglongsystems.com)
+    runs-on: ubuntu-latest
+    needs: deploy_to_server1  # 可选：依赖上一个任务完成
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Upload via SCP
+        uses: appleboy/scp-action@v0.0.5
+        with:
+          host: tenglongsystems.com
+          username: root
+          password: ${{ secrets.SERVER_PASSWORD2 }}
+          port: 22
+          target: /var/www/tenglong/ticket
+          source: "./**"
+          rm: true
+          overwrite: true
