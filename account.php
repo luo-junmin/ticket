@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 <html lang="<?= $lang->getCurrentLanguage() ?>">
 <head>
     <title><?= $lang->get('my_account') ?> - <?= SITE_NAME ?></title>
-    <?php require_once 'includes/header.php'; ?>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/h_header.php'; ?>
     <style>
         .account-container {
             display: grid;
@@ -294,7 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     </div>
 </div>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/h_footer.php'; ?>
 
 <script>
     // 激活标签页切换

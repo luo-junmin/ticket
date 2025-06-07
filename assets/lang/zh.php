@@ -58,4 +58,11 @@ return [
     'quick_links' => '快捷链接',
     'legal' => '法律',
     'TicketHub' => '票务',
+    'profile' => '个人资料',
+    'order_history' => '订单历史记录',
+    'no_orders_found' => '未找到订单',
+    'profile_information' => '个人资料详情',
+    'update_profile' => '更新资料',
+    'change_password' => '修改密码',
+    'update_password' => '更新密码',
 ];
