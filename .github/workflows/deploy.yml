@@ -3,97 +3,45 @@ name: Deploy Ticket System
 on:
   push:
     branches:
-      - master  # 或改为你的主分支名称（如 main）
+      - master
 
 jobs:
   deploy_to_server1:
-    name: Deploy to Server 1 (smilesrus.dental)
+    name: Deploy to Server 1
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # 使用最新版
+        uses: actions/checkout@v4
 
-      - name: Setup SSH
+      - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Test SSH Connection
-        run: |
-          ssh -o StrictHostKeyChecking=no \
-              ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-              "echo 'SSH test successful'"
-              log-public-key: true
+          log-public-key: true
 
       - name: Add SSH Known Hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan ${{ secrets.SERVER1_HOST }} >> ~/.ssh/known_hosts
-          ssh-keyscan ${{ secrets.SERVER2_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan "${{ secrets.SERVER1_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan "${{ secrets.SERVER2_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Test SSH Connection to Server 1
         run: |
           ssh -v -o StrictHostKeyChecking=no \
-            ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }} \
-            "echo 'SSH to Server 1 successful!'"
+              "${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }}" \
+              "echo 'SSH to Server 1 successful!'"
 
       - name: Upload via SCP to Server 1
         uses: appleboy/scp-action@v0.0.5
         with:
           host: ${{ secrets.SERVER1_HOST }}
           username: ${{ secrets.SERVER1_USER }}
-          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           target: /var/www/smilesrus/ticket
           source: ./
           rm: true
           overwrite: true
-          strip_components: 1  # 去除顶层目录结构
-
-      - name: Post-Deploy Setup on Server 1
-        run: |
-          ssh ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }} << 'EOF'
-          cd /var/www/smilesrus/ticket
-          chmod -R 775 storage bootstrap/cache
-          cp .env.example .env
-          composer install --no-dev --optimize-autoloader
-          php artisan key:generate
-          php artisan migrate --force
-          php artisan optimize:clear
-          EOF
-
-#      - name: Upload via SCP
-#        uses: appleboy/scp-action@v0.0.5
-#        with:
-#          host: smilesrus.dental
-#          username: root
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-#          # password: ${{ secrets.SSH_PRIVATE_KEY }}  # 建议按服务器单独命名密钥
-#          # port: 22  # 显式指定SSH端口
-#          target: /var/www/smilesrus/ticket
-#          source: ./
-#          rm: true  # 清空目标目录后再上传
-#          overwrite: true  # 强制覆盖同名文件
-
-#  deploy_to_server2:
-#    name: Deploy to Server 2 (tenglongsystems.com)
-#    runs-on: ubuntu-latest
-#    needs: deploy_to_server1  # 可选：依赖上一个任务完成
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
-#
-#      - name: Upload via SCP
-#        uses: appleboy/scp-action@v0.0.5
-#        with:
-#          host: tenglongsystems.com
-#          username: root
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-#          # password: ${{ secrets.SSH_PRIVATE_KEY }}
-#          # port: 22
-#          target: /var/www/tenglong/ticket
-#          source: ./
-#          rm: true
-#          overwrite: true
+          strip_components: 1
 
   deploy_to_server2:
     name: Deploy to Server 2
@@ -111,34 +59,22 @@ jobs:
       - name: Add SSH Known Hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan ${{ secrets.SERVER2_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan "${{ secrets.SERVER2_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Test SSH Connection to Server 2
         run: |
-          ssh -o StrictHostKeyChecking=no \
-            ${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }} \
-            "echo 'SSH to Server 2 successful!'"
+          ssh -v -o StrictHostKeyChecking=no \
+              "${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }}" \
+              "echo 'SSH to Server 2 successful!'"
 
       - name: Upload via SCP to Server 2
         uses: appleboy/scp-action@v0.0.5
         with:
           host: ${{ secrets.SERVER2_HOST }}
           username: ${{ secrets.SERVER2_USER }}
-          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           target: /var/www/tenglong/ticket
           source: ./
           rm: true
           overwrite: true
           strip_components: 1
-
-      - name: Post-Deploy Setup on Server 2
-        run: |
-          ssh ${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }} << 'EOF'
-          cd /var/www/tenglong/ticket
-          chmod -R 775 storage bootstrap/cache
-          cp .env.example .env
-          composer install --no-dev --optimize-autoloader
-          php artisan key:generate
-          php artisan migrate --force
-          php artisan optimize:clear
-          EOF
