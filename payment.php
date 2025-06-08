@@ -87,6 +87,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/h_header.php';
                     <label for="paynow">
                         <img src="<?= SITE_URL ?>/assets/images/paynow-logo.png" alt="PayNow">
                         <span>PayNow</span>
+                        <img src="<?= SITE_URL ?>/assets/images/paynow_ljm.jpg" alt="PayNow">
                     </label>
                 </div>
 
