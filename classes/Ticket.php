@@ -2,8 +2,10 @@
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 //use TCPDF; // 引入 TCPDF 类
-echo "-- 1 --<br>";
+//echo "-- 1 --<br>";
 //include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/assets/phpqrcode/qrlib.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/libs/phpqrcode/phpqrcode.php'; // 添加这行
 
@@ -31,7 +33,7 @@ class Ticket {
         if (empty($orderDetails)) {
             return false;
         }
-
+        return $orderDetails;
     }
 
     public function generateTickets($orderId) {
@@ -156,6 +158,7 @@ class Ticket {
         }
     }
 
+
     public function sendConfirmationEmail($orderId, $email) {
         $tickets = $this->getTicketsByOrder($orderId);
         if (empty($tickets)) return false;
@@ -169,6 +172,7 @@ class Ticket {
         $pdfPath = $this->generatePdfTickets($orderId);
 
         // Send email
+        include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/config/mail_config.php';
         $mail = new PHPMailer(true);
 
         try {
@@ -255,7 +259,7 @@ class Ticket {
             $pdf->Cell(0, 10, 'Ticket Code: ' . $ticket['ticket_code'], 0, 1);
 
             // Add QR code
-            $pdf->Image(__DIR__ . '/../public' . $ticket['qr_code_path'], 140, $pdf->GetY(), 40, 40);
+            $pdf->Image($_SERVER['DOCUMENT_ROOT'] .'/ticket/public' . $ticket['qr_code_path'], 140, $pdf->GetY(), 40, 40);
 
             $pdf->Ln(20);
 
@@ -265,7 +269,7 @@ class Ticket {
             }
         }
 
-        $pdfPath = __DIR__ . '/../assets/tickets/order_' . $orderId . '.pdf';
+        $pdfPath = $_SERVER['DOCUMENT_ROOT'] .'/ticket/public/assets/tickets/order_' . $orderId . '.pdf';
         $pdf->Output($pdfPath, 'F');
 
         return $pdfPath;

@@ -24,24 +24,24 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => '61858d4796ed0bb0abb26032ac2d489944347f9e',
     'name' => '__root__',
   ),
   'versions' => 
   array (
     '__root__' => 
     array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => '61858d4796ed0bb0abb26032ac2d489944347f9e',
     ),
     'dompdf/dompdf' => 
     array (
@@ -78,6 +78,15 @@ private static $installed = array (
       array (
       ),
       'reference' => 'f5ac2c0b0a2eefca70b2ce32a5809992227e75a6',
+    ),
+    'phpmailer/phpmailer' => 
+    array (
+      'pretty_version' => 'v6.10.0',
+      'version' => '6.10.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'bf74d75a1fde6beaa34a0ddae2ec5fce0f72a144',
     ),
     'sabberworm/php-css-parser' => 
     array (

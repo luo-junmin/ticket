@@ -47,7 +47,7 @@ if ($user['role'] !== ADMIN_ROLE) {
 }
 
 // 检查最后活动时间（可选的安全增强）
-$inactive = 1800; // 30分钟无操作超时
+$inactive = 3600; // 30分钟无操作超时
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $inactive)) {
     session_unset();
     session_destroy();

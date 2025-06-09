@@ -146,17 +146,17 @@ class Order {
         }
     }
 
-    public function getRecentOrders($limit = 5) {
+    public function getRecentOrders($limit = 10) {
         $stmt = $this->pdo->prepare("
             SELECT o.*, e.title AS event_title, u.email AS user_email
             FROM orders o
             JOIN events e ON o.event_id = e.event_id
             JOIN users u ON o.user_id = u.user_id
-            ORDER BY o.order_date DESC
-            LIMIT ?
+            ORDER BY o.payment_date DESC
+            LIMIT :limit
         ");
-//        $stmt->execute([$limit]);
-        $stmt->execute($limit);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll();
     }
 

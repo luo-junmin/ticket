@@ -51,4 +51,40 @@ return [
     'available_zones' => 'Available Zones',
     'book_tickets' => 'Book Tickets',
     'standard' => 'Standard',
+
+    // ... existing entries ...
+    'paynow_payment' => 'PayNow Payment',
+    'scan_paynow_qr' => 'Scan the QR code below to make payment',
+    'paynow_reference' => 'Reference',
+    'amount_to_pay' => 'Amount to pay',
+    'upload_receipt' => 'Upload Payment Receipt',
+    'select_receipt' => 'Select Receipt File',
+    'receipt_upload_help' => 'Upload screenshot or PDF of your PayNow payment confirmation',
+    'receipt_upload_success' => 'Receipt uploaded successfully. Please confirm your payment.',
+    'payment_confirmation_success' => 'Payment confirmation submitted. Your tickets will be issued after verification.',
+    'receipt_uploaded_pending' => 'Receipt uploaded and pending verification.',
+    'payment_completed' => 'Payment already completed.',
+    'no_receipt_uploaded' => 'Please upload your payment receipt first.',
+    'payment_confirmation_failed' => 'Failed to confirm payment. Please try again.',
+    'confirm_payment' => 'Confirm Payment',
+
+    // Admin
+    'payment_review' => 'Payment Review',
+    'no_pending_payments' => 'No pending payments to review.',
+    'order' => 'Order',
+    'user' => 'User',
+    'uploaded_on' => 'Uploaded on',
+    'payment_receipt' => 'Payment Receipt',
+    'view_pdf' => 'View PDF',
+    'remarks' => 'Remarks',
+    'approve' => 'Approve',
+    'reject' => 'Reject',
+    'payment_approved_success' => 'Payment approved successfully. Tickets have been issued.',
+    'payment_approval_failed' => 'Failed to approve payment.',
+    'payment_rejected_success' => 'Payment rejected successfully.',
+    'payment_rejection_failed' => 'Failed to reject payment.',
+    'pending_payments' => 'Pending Payments',
+    'review_now' => 'Review now',
+    'no_pending_payments' => 'No pending payments to review'
+
 ];

@@ -23,7 +23,7 @@ $totalPages = ceil($totalOrders / $perPage);
 $statusCounts = $order->getOrderStatusCounts();
 
 $pageTitle = "Manage Orders";
-include __DIR__ . '/../../includes/admin_header.php';
+include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php';
 ?>
 
 <div class="container-fluid">
@@ -114,13 +114,13 @@ include __DIR__ . '/../../includes/admin_header.php';
                                                 </span>
                                         </td>
                                         <td>
-                                            <a href="edit.php?id=<?= $orderItem['id'] ?>" class="btn btn-sm btn-primary" title="Edit">
+                                            <a href="edit.php?id=<?= $orderItem['order_id'] ?>" class="btn btn-sm btn-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="view.php?id=<?= $orderItem['id'] ?>" class="btn btn-sm btn-info" title="View">
+                                            <a href="view.php?id=<?= $orderItem['order_id'] ?>" class="btn btn-sm btn-info" title="View">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <button class="btn btn-sm btn-danger delete-order" data-id="<?= $orderItem['id'] ?>" title="Delete">
+                                            <button class="btn btn-sm btn-danger delete-order" data-id="<?= $orderItem['order_id'] ?>" title="Delete">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>

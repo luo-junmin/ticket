@@ -13,7 +13,6 @@ if ($statusFilter) {
     });
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,6 +23,7 @@ if ($statusFilter) {
 </head>
 <body>
 <?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_navbar.php'; ?>
+
 
 <div class="container-fluid">
     <div class="row">
