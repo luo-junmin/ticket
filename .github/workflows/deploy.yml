@@ -79,4 +79,5 @@ jobs:
           source: ./
           rm: true
           overwrite: true
+          timeout: 2m  # 增加超时时间
           strip_components: 1

@@ -5,11 +5,28 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/database.php';
+function getBaseUrl($option='host') {
+    // 判断是否为 HTTPS
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? 'https://' : 'http://';
 
+    // 获取主机名
+    $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'];
+
+    if ($option == 'host') {
+        return $protocol . $host;
+    } else {
+        // 获取脚本路径（处理子目录情况）
+        $scriptPath = dirname($_SERVER['SCRIPT_NAME']);
+        $basePath = ($scriptPath === '/' || $scriptPath === '\\') ? '' : $scriptPath;
+
+        return $protocol . $host . $basePath;
+    }
+}
+$host = getBaseUrl();
 // Site configuration
 define('SITE_NAME', 'TicketHub');
-define('SITE_URL', 'http://localhost/ticket/');
-//define('SITE_URL', '/ticket');
+//define('SITE_URL', 'http://localhost/ticket');
+define('SITE_URL', $host.'/ticket');
 define('SITE_EMAIL', 'tickethub.luo@gmail.com');
 define('ADMIN_EMAIL', 'admin@yourdomain.com');
 
