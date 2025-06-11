@@ -61,6 +61,20 @@ return [
     'register_here' => 'Register Here',
 
     // ... existing entries ...
+    'my_orders' => 'My Orders',
+    'date' => 'Date',
+    'category' => 'Category',
+    'base_price' => 'Base Price',
+    'discount' => 'Discount',
+    'book_tickets' => 'Book Tickets',
+    'profile' => 'Profile',
+    'profile_information' => 'Profile Information',
+    'change_password' => 'Change Password',
+    'current_password' => 'Current Password',
+    'new_password' => 'New Password',
+    'password_requirements' => 'Password Requirements',
+
+    'price_category' => 'Price Category',
     'payment' => 'Payment',
     'order_summary' => 'Order Summary',
     'event' => 'Event',
@@ -127,6 +141,33 @@ return [
     'welcome_email_subject' => 'Welcome to {site}',
     'welcome_email_body' => '<p>Dear {name},</p>
                             <p>Thank you for registering with <a href="{url}">{site}!</a></p>
-                            <p>Your account has been successfully verified and you can now purchase tickets.</p>'
+                            <p>Your account has been successfully verified and you can now purchase tickets.</p>',
+
+                'my_orders' => 'My Orders',
+                'no_orders_message' => 'You have no orders yet,',
+                'browse_events' => 'browse events',
+                'order_number' => 'Order #',
+                'event_name' => 'Event',
+                'order_date' => 'Order Date',
+                'total_amount' => 'Total',
+                'payment_status' => 'Status',
+                'payment_status_completed' => 'Completed',
+                'payment_status_pending' => 'Pending',
+                'payment_status_failed' => 'Failed',
+                'actions' => 'Actions',
+                'view_details' => 'View Details',
+                'pay_now' => 'Pay Now',
+                'previous_page' => 'Previous',
+                'next_page' => 'Next',
+                'order_details' => 'Order Details',
+                'back_to_orders' => 'Back to Orders',
+                'order_information' => 'Order Information',
+                'ticket_information' => 'Ticket Information',
+                'ticket_zone' => 'Zone',
+                'unit_price' => 'Unit Price',
+                'quantity' => 'Qty',
+                'subtotal' => 'Subtotal',
+                'total' => 'Total',
+                'currency_symbol' => '$'
 
 ];

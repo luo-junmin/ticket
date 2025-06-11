@@ -271,6 +271,7 @@ if (isset($_GET['lang'])) {
                             </div>
                         `);
                     }
+                },
                 error: function() {
                     $('#loginMessage').removeClass('alert-success').addClass('alert-danger')
                         .text('Network error. Please try later.').removeClass('d-none');

@@ -243,4 +243,71 @@ class Order {
         return $stmt->execute($params);
     }
 
+    public function getUserOrders($userId) {
+        $stmt = $this->pdo->prepare("
+        SELECT 
+            o.order_id, 
+            o.total_amount, 
+            o.payment_status, 
+            o.created_at,
+            e.title AS event_title
+        FROM 
+            orders o
+        JOIN 
+            events e ON o.event_id = e.event_id
+        WHERE 
+            o.user_id = ?
+        ORDER BY 
+            o.created_at DESC
+    ");
+
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function belongsToUser($orderId, $userId) {
+        $stmt = $this->pdo->prepare("
+        SELECT COUNT(*) 
+        FROM orders 
+        WHERE order_id = ? AND user_id = ?
+    ");
+        $stmt->execute([$orderId, $userId]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function getOrderDetails($orderId) {
+        // 获取订单基本信息
+        $stmt = $this->pdo->prepare("
+        SELECT 
+            o.*, 
+            e.title AS event_title,
+            e.event_date,
+            e.location
+        FROM 
+            orders o
+        JOIN 
+            events e ON o.event_id = e.event_id
+        WHERE 
+            o.order_id = ?
+    ");
+        $stmt->execute([$orderId]);
+        $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // 获取订单项
+        $stmt = $this->pdo->prepare("
+        SELECT 
+            od.*,
+            tz.zone_name
+        FROM 
+            order_details od
+        JOIN 
+            ticket_zones tz ON od.zone_id = tz.zone_id
+        WHERE 
+            od.order_id = ?
+    ");
+        $stmt->execute([$orderId]);
+        $order['items'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $order;
+    }
 }

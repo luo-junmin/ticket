@@ -75,6 +75,12 @@ return [
     'register_here' => '这里注册',
 
     // ... existing entries ...
+    'my_orders' => '我的订单',
+    'date' => '日期',
+    'category' => '类别',
+    'base_price' => '基本价格',
+    'discount' => '折扣',
+    'book_tickets' => '预订门票',
     'paynow_payment' => 'PayNow 支付',
     'scan_paynow_qr' => '扫描下方二维码完成支付',
     'paynow_reference' => '参考编号',
@@ -89,8 +95,15 @@ return [
     'no_receipt_uploaded' => '请先上传您的付款凭证。',
     'payment_confirmation_failed' => '确认付款失败，请重试。',
     'confirm_payment' => '确认支付',
+    'profile' => '个人资料',
+    'profile_information' => '个人资料信息',
+    'change_password' => '更改密码',
+    'current_password' => '当前密码',
+    'new_password' => '新密码',
+    'password_requirements' => '密码要求',
 
     // Admin
+    'price_category' => '价格类别',
     'payment' => '付款',
     'order_summary' => '订单摘要',
     'event' => '事件',
@@ -141,7 +154,33 @@ return [
     'welcome_email_subject' => '欢迎加入{site}',
     'welcome_email_body' => '<p>尊敬的{name}：</p>
                             <p>感谢您注册<a href="{url}">{site}！</a></p>
-                            <p>您的账号已成功验证，现在可以购买门票了。</p>'
+                            <p>您的账号已成功验证，现在可以购买门票了。</p>',
 
+                'my_orders' => '我的订单',
+                'no_orders_message' => '您还没有任何订单，',
+                'browse_events' => '浏览活动',
+                'order_number' => '订单编号',
+                'event_name' => '活动名称',
+                'order_date' => '下单时间',
+                'total_amount' => '总金额',
+                'payment_status' => '支付状态',
+                'payment_status_completed' => '已完成',
+                'payment_status_pending' => '待支付',
+                'payment_status_failed' => '支付失败',
+                'actions' => '操作',
+                'view_details' => '查看详情',
+                'pay_now' => '立即支付',
+                'previous_page' => '上一页',
+                'next_page' => '下一页',
+                'order_details' => '订单详情',
+                'back_to_orders' => '返回订单列表',
+                'order_information' => '订单信息',
+                'ticket_information' => '票务信息',
+                'ticket_zone' => '票区',
+                'unit_price' => '单价',
+                'quantity' => '数量',
+                'subtotal' => '小计',
+                'total' => '总计',
+                'currency_symbol' => '¥'
 
 ];
