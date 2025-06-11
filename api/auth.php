@@ -1,10 +1,23 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/classes/User.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/includes/autoload.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/includes/csrf.php';
+
+error_log("CSRF Token Received: " . ($_POST['csrf_token'] ?? 'NULL'));
+error_log("Session CSRF Token: " . ($_SESSION['csrf_token'] ?? 'NULL'));
+
+// 确保session已启动
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 
 //header('Content-Type: application/json');
 
 $action = $_GET['action'] ?? '';
+$response = ['success' => false, 'message' => 'Invalid action'];
+
 $user = new User();
 
 switch ($action) {
@@ -13,7 +26,8 @@ switch ($action) {
         $password = $_POST['password'] ?? '';
         $remember = isset($_POST['remember']);
         $result = $user->login($email, $password);
-//        trigger_error(print_r($result, true));
+        // 调试输出（正式环境应移除）
+        error_log("Session after login: " . print_r($_SESSION, true));
 
         if ($result['success']) {
             if ($remember) {
@@ -30,20 +44,55 @@ switch ($action) {
         break;
 
     case 'register':
-        $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        // 确保获取了CSRF令牌
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!verifyCsrfToken($csrfToken)) {  // 这里必须传递参数
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Invalid CSRF token']);
+            break;
+        }
+
+        $email = strtolower(trim($_POST['email'] ?? '')); // 规范化邮箱
         $password = $_POST['password'] ?? '';
         $confirmPassword = $_POST['confirm_password'] ?? '';
-        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-        $phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
+        $name = trim($_POST['name'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+
+        // 基础验证
+        if (empty($email)) {
+            echo json_encode(['success' => false, 'message' => 'Email is required']);
+            exit;
+        }
 
         if ($password !== $confirmPassword) {
             echo json_encode(['success' => false, 'message' => 'Passwords do not match']);
             exit;
         }
 
-        $result = $user->register($email, $password, $name, $phone);
-        echo json_encode($result);
-        break;
+        if (empty($_POST['agree_terms'])) {
+            echo json_encode(['success' => false, 'message' => 'You must agree to the terms']);
+            exit;
+        }
+
+        try {
+            $result = $user->register($email, $password, $name, $phone);
+
+            // 确保返回统一格式
+            if ($result['success']) {
+                http_response_code(201); // Created
+            } else {
+                http_response_code(400); // Bad Request
+            }
+            $response = $result;
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            error_log("Registration error: " . $e->getMessage());
+            $response = ['success' => false, 'message' => 'Registration failed'];
+        }
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit;
 
     case 'forgot_password':
         $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);

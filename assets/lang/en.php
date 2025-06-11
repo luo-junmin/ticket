@@ -51,6 +51,14 @@ return [
     'available_zones' => 'Available Zones',
     'book_tickets' => 'Book Tickets',
     'standard' => 'Standard',
+    'confirm_password' => 'Confirm Password',
+    'i_agree_to' => 'I agree to',
+    'terms_of_service' => 'Terms of Service',
+    'login_here' => 'Login Here',
+    'remember_me' => 'Remember Me',
+    'forgot_password' => 'Forgot Password',
+    'no_account' => 'No account?',
+    'register_here' => 'Register Here',
 
     // ... existing entries ...
     'paynow_payment' => 'PayNow Payment',
@@ -85,6 +93,35 @@ return [
     'payment_rejection_failed' => 'Failed to reject payment.',
     'pending_payments' => 'Pending Payments',
     'review_now' => 'Review now',
-    'no_pending_payments' => 'No pending payments to review'
+    'no_pending_payments' => 'No pending payments to review',
+
+    'register' => 'Register',
+    'email' => 'Email',
+    'password' => 'Password',
+    'full_name' => 'Full Name',
+    'phone' => 'Phone',
+    'invalid_email' => 'Invalid email address',
+    'email_exists' => 'Email already registered',
+    'weak_password' => 'Password must be at least 8 characters',
+    'registration_success' => 'Registration successful! Please check your email to verify your account.',
+    'registration_failed' => 'Registration failed. Please try again.',
+    'verify_email_subject' => 'Verify Your Email Address',
+    'verify_email_body' => '<p>Dear User,</p>
+                          <p>Please click the following link to verify your email address:</p>
+                          <p><a href="{url}">Verify Email</a></p>
+                          <p>Or copy this link to your browser: {url}</p>
+                          <p>This link will expire in {hours} hours.</p>
+                          <p>Thank you!</p>',
+
+    'email_verification' => 'Email Verification',
+    'invalid_verification' => 'Invalid verification request',
+    'invalid_token' => 'Invalid verification token',
+    'token_expired' => 'Verification link has expired',
+    'verification_success' => 'Email verified successfully! You can now log in.',
+    'verification_failed' => 'Email verification failed',
+    'welcome_email_subject' => 'Welcome to {site}',
+    'welcome_email_body' => '<p>Dear {name},</p>
+                            <p>Thank you for registering with <a href="{url}">{site}!</a></p>
+                            <p>Your account has been successfully verified and you can now purchase tickets.</p>'
 
 ];

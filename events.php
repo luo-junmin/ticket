@@ -1,13 +1,13 @@
 <?php
-if (!isset($_GET['id'])) {
-    header("Location: index.php");
-    exit;
-}
-
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/config/config.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/classes/Database.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/classes/Event.php';
 //include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/autoload.php';
+
+if (!isset($_GET['id'])) {
+    header("Location: index.php");
+    exit;
+}
 
 $eventId = (int)$_GET['id'];
 $db = new Database();

@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/config/config.php';
 require_once 'includes/header.php';
 
 $message = '';

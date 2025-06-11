@@ -265,3 +265,14 @@ body {
 .alert {
     margin-bottom: 1rem;
 }
+
+#registerMessage {
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
+
+/* 加载动画 */
+.spinner-border {
+    vertical-align: middle;
+    margin-right: 5px;
+}

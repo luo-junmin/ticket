@@ -65,6 +65,15 @@ return [
     'update_profile' => '更新资料',
     'change_password' => '修改密码',
     'update_password' => '更新密码',
+    'confirm_password' => '确认密码',
+    'i_agree_to' => '我同意',
+    'terms_of_service' => '服务条款',
+    'login_here' => '这里登录',
+    'remember_me' => '记住我',
+    'forgot_password' => '忘了密码',
+    'no_account' => '没有账号?',
+    'register_here' => '这里注册',
+
     // ... existing entries ...
     'paynow_payment' => 'PayNow 支付',
     'scan_paynow_qr' => '扫描下方二维码完成支付',
@@ -98,6 +107,36 @@ return [
     'payment_rejection_failed' => '拒绝付款失败。',
     'pending_payments' => '待处理付款',
     'review_now' => '立即审核',
-    'no_pending_payments' => '没有待审核的付款'
+    'no_pending_payments' => '没有待审核的付款',
+
+    'register' => '注册',
+    'email' => '电子邮箱',
+    'password' => '密码',
+    'full_name' => '姓名',
+    'phone' => '电话',
+    'invalid_email' => '无效的邮箱地址',
+    'email_exists' => '邮箱已被注册',
+    'weak_password' => '密码长度至少8位',
+    'registration_success' => '注册成功！请查收邮件验证您的账号。',
+    'registration_failed' => '注册失败，请重试。',
+    'verify_email_subject' => '验证您的邮箱地址',
+    'verify_email_body' => '<p>尊敬的客户：</p>
+                          <p>请点击以下链接验证您的邮箱地址：</p>
+                          <p><a href="{url}">验证邮箱</a></p>
+                          <p>或者复制此链接到浏览器：{url}</p>
+                          <p>该链接将在{hours}小时后失效。</p>
+                          <p>感谢您的注册！</p>',
+
+    'email_verification' => '邮箱验证',
+    'invalid_verification' => '无效的验证请求',
+    'invalid_token' => '无效的验证令牌',
+    'token_expired' => '验证链接已过期',
+    'verification_success' => '邮箱验证成功！您现在可以登录了。',
+    'verification_failed' => '邮箱验证失败',
+    'welcome_email_subject' => '欢迎加入{site}',
+    'welcome_email_body' => '<p>尊敬的{name}：</p>
+                            <p>感谢您注册<a href="{url}">{site}！</a></p>
+                            <p>您的账号已成功验证，现在可以购买门票了。</p>'
+
 
 ];

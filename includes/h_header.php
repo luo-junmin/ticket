@@ -2,9 +2,12 @@
 // Start output buffering at the VERY beginning
 ob_start();
 
-include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/config/config.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
 $lang = Language::getInstance();
 $currentPage = basename($_SERVER['PHP_SELF']);
+// 检查变量是否存在再使用
+$userRole = $_SESSION['user_role'] ?? 'guest';
+$userEmail = $_SESSION['user_email'] ?? '';
 
 // 处理语言切换
 if (isset($_GET['lang'])) {
@@ -29,15 +32,16 @@ if (isset($_GET['lang'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= SITE_NAME ?> - <?= $lang->get($currentPage) ?></title>
-<!--    <link href="/ticket/assets/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--    <link href="/ticket/assets/css/bootstrap.min.css" rel="stylesheet">-->
 
     <link href="/ticket/assets/css/all.min.css" rel="stylesheet">
     <link href="/ticket/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="/ticket/assets/fonts/bootstrap-icons.css" rel="stylesheet">
-<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/ticket/assets/js/bootstrap.bundle.min.js"></script>
     <link href="/ticket/assets/css/style.css" rel="stylesheet">
 </head>
+
 <body>
 <!-- 在header.php的</header>标签前添加模态框代码 -->
 <!-- 登录模态框 -->
@@ -50,6 +54,7 @@ if (isset($_GET['lang'])) {
             </div>
             <div class="modal-body">
                 <form id="loginForm" method="POST" action="/ticket/api/auth.php?action=login">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="mb-3">
                         <label for="loginEmail" class="form-label"><?= $lang->get('email') ?></label>
                         <input type="email" class="form-control" id="loginEmail" name="email" required>
@@ -91,7 +96,12 @@ if (isset($_GET['lang'])) {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <!-- 添加消息显示区域 -->
+                <div id="registerMessage" class="alert d-none"></div>
                 <form id="registerForm" method="POST" action="/ticket/api/auth.php?action=register">
+                    <?php include_once $_SERVER['DOCUMENT_ROOT'].'/ticket/includes/csrf.php'; ?>
+                    <?php echo csrfField(); ?>
+                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                     <div class="mb-3">
                         <label for="registerEmail" class="form-label"><?= $lang->get('email') ?>*</label>
                         <input type="email" class="form-control" id="registerEmail" name="email" required>
@@ -102,7 +112,8 @@ if (isset($_GET['lang'])) {
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label"><?= $lang->get('confirm_password') ?>*</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password"
+                               required>
                     </div>
                     <div class="mb-3">
                         <label for="registerName" class="form-label"><?= $lang->get('name') ?></label>
@@ -135,7 +146,8 @@ if (isset($_GET['lang'])) {
 </div>
 
 <!-- 忘记密码模态框 -->
-<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -144,6 +156,7 @@ if (isset($_GET['lang'])) {
             </div>
             <div class="modal-body">
                 <form id="forgotPasswordForm" method="POST" action="/ticket/api/auth.php?action=forgot_password">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? '' ?>">
                     <div class="mb-3">
                         <label for="forgotEmail" class="form-label"><?= $lang->get('email') ?></label>
                         <input type="email" class="form-control" id="forgotEmail" name="email" required>
@@ -157,6 +170,128 @@ if (isset($_GET['lang'])) {
     </div>
 </div>
 
+<script>
+    $(document).ready(function () {
+
+        // 获取CSRF令牌
+        function getCsrfToken() {
+            return $('input[name="csrf_token"]').val() || '';
+        }
+
+
+        $('#registerForm').on('submit', function (e) {
+            e.preventDefault();
+
+            // 清除之前的状态
+            $('#registerMessage').addClass('d-none').removeClass('alert-success alert-danger');
+
+            // 显示加载状态
+            const submitBtn = $(this).find('button[type="submit"]');
+            const originalText = submitBtn.text();
+            submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+
+            // 获取表单数据包括CSRF令牌
+            var formData = $(this).serialize();
+
+            // 发送AJAX请求
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                // data: $(this).serialize(),
+                data: formData, // 自动包含CSRF令牌
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        // 注册成功 - 禁用表单防止重复提交
+                        $('#registerForm').find('input, button').prop('disabled', true);
+                        $('#registerMessage').removeClass('d-none').addClass('alert-success').html(`
+                        <i class="bi bi-check-circle-fill"></i> ${response.message}
+                        <div class="mt-2">We've sent a verification email to your inbox.</div>
+                        `);
+
+                        // 5秒后关闭弹窗
+                        setTimeout(function () {
+                            $('#registerModal').modal('hide');
+                        }, 9000);
+                    } else {
+                        // 注册失败
+                        $('#registerMessage').removeClass('d-none').addClass('alert-danger').html(`
+                        <i class="bi bi-exclamation-triangle-fill"></i> ${response.message}
+                        `);
+                    }
+                },
+                error: function (xhr) {
+                    let errorMsg = 'An unexpected error occurred. Please try again.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    $('#registerMessage').removeClass('d-none').addClass('alert-danger').text(errorMsg);
+                },
+                complete: function () {
+                    // 恢复按钮状态
+                    submitBtn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+
+        // main.js 或相关前端代码
+        $('#loginForm').on('submit', function(e) {
+            e.preventDefault();
+
+            // 确保CSRF令牌随表单提交
+            let formData = $(this).serializeArray();
+            formData.push({
+                name: 'csrf_token',
+                value: $('input[name="csrf_token"]').val()
+            });
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $.param(formData),
+                dataType: 'json',
+            // $.ajax({
+            //     url: '/ticket/api/auth.php?action=login',
+            //     type: 'POST',
+            //     data: $(this).serialize(),
+            //     dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        // 显示成功消息
+                        // $('#loginMessage').removeClass('alert-danger').addClass('alert-success')
+                        //     .text(response.message).removeClass('d-none');
+
+                        $('#loginMessage').html(`
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle"></i> Login successful! Redirecting...
+                            </div>
+                        `);
+
+                        // 2秒后刷新页面或跳转
+                        setTimeout(() => {
+                            window.location.href = '/ticket/profile.php'; // 跳转到用户主页
+                        }, 2000);
+                    } else {
+                        // 显示错误消息
+                    //     $('#loginMessage').removeClass('alert-success').addClass('alert-danger')
+                    //         .text(response.message).removeClass('d-none');
+                    // }
+                    $('#loginMessage').html(`
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle"></i> ${response.message}
+                        </div>
+                    `);
+                },
+                error: function() {
+                    $('#loginMessage').removeClass('alert-success').addClass('alert-danger')
+                        .text('Network error. Please try later.').removeClass('d-none');
+                }
+            });
+        });
+
+    });
+</script>
+
 <header class="horizontal-nav">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -169,24 +304,29 @@ if (isset($_GET['lang'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?= $currentPage === 'index.php' ? 'active' : '' ?>" href="/ticket"><?= $lang->get('home') ?></a>
+                        <a class="nav-link <?= $currentPage === 'index.php' ? 'active' : '' ?>"
+                           href="/ticket"><?= $lang->get('home') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= $currentPage === 'events.php' ? 'active' : '' ?>" href="/ticket/events.php"><?= $lang->get('events') ?></a>
+                        <a class="nav-link <?= $currentPage === 'events.php' ? 'active' : '' ?>"
+                           href="/ticket/events.php"><?= $lang->get('events') ?></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= strpos($currentPage, 'account') !== false ? 'active' : '' ?>" href="/ticket/account.php"><?= $lang->get('my_account') ?></a>
+                        <a class="nav-link <?= strpos($currentPage, 'account') !== false ? 'active' : '' ?>"
+                           href="/ticket/account.php"><?= $lang->get('my_account') ?></a>
                     </li>
                     <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin'): ?>
                         <li class="nav-item">
-                            <a class="nav-link <?= strpos($currentPage, 'admin') !== false ? 'active' : '' ?>" href="/ticket/admin/login.php"><?= $lang->get('admin') ?></a>
+                            <a class="nav-link <?= strpos($currentPage, 'admin') !== false ? 'active' : '' ?>"
+                               href="/ticket/admin/login.php"><?= $lang->get('admin') ?></a>
                         </li>
                     <?php endif; ?>
                 </ul>
 
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button"
+                           data-bs-toggle="dropdown">
                             <?= strtoupper($lang->getCurrentLanguage()) ?>
                         </a>
                         <ul class="dropdown-menu">
@@ -196,24 +336,33 @@ if (isset($_GET['lang'])) {
                     </li>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                               data-bs-toggle="dropdown">
                                 <?= htmlspecialchars($_SESSION['name'] ?? $_SESSION['email']) ?>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/ticket/account.php"><?= $lang->get('my_account') ?></a></li>
-                                <li><a class="dropdown-item" href="/ticket/orders.php"><?= $lang->get('my_orders') ?></a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/ticket/logout.php"><?= $lang->get('logout') ?></a></li>
+                                <li><a class="dropdown-item"
+                                       href="/ticket/account.php"><?= $lang->get('my_account') ?></a></li>
+                                <li><a class="dropdown-item"
+                                       href="/ticket/orders.php"><?= $lang->get('my_orders') ?></a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="/ticket/logout.php"><?= $lang->get('logout') ?></a>
+                                </li>
                             </ul>
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
                             <button class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                <i class="fas fa-sign-in-alt me-1"></i>
                                 <?= $lang->get('login') ?>
                             </button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link btn btn-link" data-bs-toggle="modal" data-bs-target="#registerModal">
+                            <button class="nav-link btn btn-link" data-bs-toggle="modal"
+                                    data-bs-target="#registerModal">
+                                <i class="fas fa-user-plus me-1"></i>
                                 <?= $lang->get('register') ?>
                             </button>
                         </li>

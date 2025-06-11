@@ -1,10 +1,16 @@
 <?php
+// Start session
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/database.php';
 
 // Site configuration
 define('SITE_NAME', 'TicketHub');
-//define('SITE_URL', 'https://tickets.yourdomain.com');
-define('SITE_URL', '/ticket');
+define('SITE_URL', 'http://localhost/ticket/');
+//define('SITE_URL', '/ticket');
+define('SITE_EMAIL', 'tickethub.luo@gmail.com');
 define('ADMIN_EMAIL', 'admin@yourdomain.com');
 
 // Path configuration
@@ -23,11 +29,6 @@ error_reporting(E_ALL);
 
 // Set default timezone
 date_default_timezone_set('Asia/Singapore');
-
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
 // Initialize language
 //require_once BASE_PATH . '/classes/Language.php';

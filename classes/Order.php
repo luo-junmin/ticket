@@ -158,16 +158,62 @@ class Order {
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll();
+//        return $stmt->fetchColumn();
     }
 
     public function getOrderById($id) {
         $stmt = $this->pdo->prepare("
-            SELECT * FROM orders WHERE order_id = ?
+            SELECT o.*, u.name AS user_name FROM orders o
+            JOIN 
+                users u ON o.user_id = u.user_id                     
+            WHERE 
+                order_id = :id
         ");
-        $stmt->execute($id);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+
+//        $stmt->execute($id);
         return $stmt->fetchAll();
     }
 
+    public function getOrderItems($order_id) {
+        try {
+            $stmt = $this->pdo->prepare("
+            SELECT 
+                u.name AS user_name,
+                u.email AS user_email,
+                o.order_id,
+                o.total_amount,
+                o.payment_status,
+                od.quantity,
+                od.price_per_ticket AS price,
+                tz.zone_name,
+                e.title AS event_title
+            FROM 
+                orders o
+            JOIN 
+                users u ON o.user_id = u.user_id
+            JOIN 
+                order_details od ON o.order_id = od.order_id
+            JOIN
+                ticket_zones tz ON od.zone_id = tz.zone_id
+            JOIN
+                events e ON o.event_id = e.event_id
+            WHERE 
+                o.order_id = :id
+        ");
+
+//            $stmt->execute([$order_id]);
+            $stmt->bindParam(':id', $order_id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log("Order items query failed: " . $e->getMessage());
+            return false;
+        }
+    }
     public function updateTransactionId($orderId, $transactionId) {
         $stmt = $this->pdo->prepare("
             UPDATE orders 

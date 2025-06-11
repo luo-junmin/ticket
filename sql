@@ -35,34 +35,7 @@ CREATE TABLE ticket_zones (
     FOREIGN KEY (event_id) REFERENCES events(event_id)
 );
 
--- 订单表
-CREATE TABLE orders (
-    order_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    event_id INT NOT NULL,
-    total_amount DECIMAL(10,2) NOT NULL,
-    payment_method ENUM('paynow', 'credit_card') NOT NULL,
-    payment_status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
-	payment_transaction_id	varchar(255)	NOT NULL,
-	payment_date datetime NULL
-	transaction_expiry	datetime NULL
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (event_id) REFERENCES events(event_id)
-);
-
--- 订单详情表
-CREATE TABLE order_details (
-    detail_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT NOT NULL,
-    zone_id INT NOT NULL,
-    quantity INT NOT NULL,
-    price_per_ticket DECIMAL(10,2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    FOREIGN KEY (zone_id) REFERENCES ticket_zones(zone_id)
-);
-
--- 票据表
+c-- 票据表
 CREATE TABLE tickets (
     ticket_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
