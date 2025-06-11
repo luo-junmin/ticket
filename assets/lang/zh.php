@@ -91,6 +91,11 @@ return [
     'confirm_payment' => '确认支付',
 
     // Admin
+    'payment' => '付款',
+    'order_summary' => '订单摘要',
+    'event' => '事件',
+    'total_amount' => '总共',
+
     'payment_review' => '付款审核',
     'no_pending_payments' => '没有待审核的付款。',
     'order' => '订单',

@@ -250,17 +250,9 @@ if (isset($_GET['lang'])) {
                 type: 'POST',
                 data: $.param(formData),
                 dataType: 'json',
-            // $.ajax({
-            //     url: '/ticket/api/auth.php?action=login',
-            //     type: 'POST',
-            //     data: $(this).serialize(),
-            //     dataType: 'json',
                 success: function(response) {
                     if (response.success) {
                         // 显示成功消息
-                        // $('#loginMessage').removeClass('alert-danger').addClass('alert-success')
-                        //     .text(response.message).removeClass('d-none');
-
                         $('#loginMessage').html(`
                             <div class="alert alert-success">
                                 <i class="bi bi-check-circle"></i> Login successful! Redirecting...
@@ -273,15 +265,12 @@ if (isset($_GET['lang'])) {
                         }, 2000);
                     } else {
                         // 显示错误消息
-                    //     $('#loginMessage').removeClass('alert-success').addClass('alert-danger')
-                    //         .text(response.message).removeClass('d-none');
-                    // }
-                    $('#loginMessage').html(`
-                        <div class="alert alert-danger">
-                            <i class="bi bi-exclamation-triangle"></i> ${response.message}
-                        </div>
-                    `);
-                },
+                        $('#loginMessage').html(`
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle"></i> ${response.message}
+                            </div>
+                        `);
+                    }
                 error: function() {
                     $('#loginMessage').removeClass('alert-success').addClass('alert-danger')
                         .text('Network error. Please try later.').removeClass('d-none');

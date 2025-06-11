@@ -61,6 +61,11 @@ return [
     'register_here' => 'Register Here',
 
     // ... existing entries ...
+    'payment' => 'Payment',
+    'order_summary' => 'Order Summary',
+    'event' => 'Event',
+    'total_amount' => 'Total Amount',
+
     'paynow_payment' => 'PayNow Payment',
     'scan_paynow_qr' => 'Scan the QR code below to make payment',
     'paynow_reference' => 'Reference',
