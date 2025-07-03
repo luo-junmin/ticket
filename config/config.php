@@ -31,8 +31,8 @@ define('SITE_URL', $host);
 define('SITE_EMAIL', 'tickethub.luo@gmail.com');
 define('ADMIN_EMAIL', 'admin@yourdomain.com');
 
-define('PUBLIC_PATH', $_SERVER['DOCUMENT_ROOT'].'/ticket-public');
-define('UPLOADS_PATH', $_SERVER['DOCUMENT_ROOT'].'/ticket-uploads');
+define('PUBLIC_PATH', '/ticket-public');
+define('UPLOADS_PATH', '/ticket-uploads');
 
 // Path configuration
 //define('BASE_PATH', '/var/www/html/ticketing-system');
