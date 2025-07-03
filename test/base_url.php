@@ -25,3 +25,4 @@ echo "<br>".$baseUrl;
 $baseUrl = getBaseUrl2();
 echo "<br>".$baseUrl;
 echo "<br>".SITE_URL;
+echo "<br>".$_SERVER['DOCUMENT_ROOT'];
