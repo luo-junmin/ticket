@@ -45,6 +45,15 @@ jobs:
           overwrite: true
           strip_components: 1
 
+      - name: Fix permissions after deployment
+        run: |
+          ssh -i ${{ secrets.SSH_KEY }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          sudo chown -R www-data:www-data /var/www/smilesrus/ticket-public
+          sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
+          sudo mkdir -p /var/www/smilesrus/ticket-public/assets/{qrcodes,tickets}
+          sudo chmod -R 775 /var/www/smilesrus/ticket-public/assets
+          EOF
+
   deploy_to_server2:
     name: Deploy to Server 2
     runs-on: ubuntu-latest
@@ -83,3 +92,12 @@ jobs:
           overwrite: true
           timeout: 2m  # 增加超时时间
           strip_components: 1
+
+      - name: Fix permissions after deployment
+        run: |
+          ssh -i ${{ secrets.SSH_KEY }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          sudo chown -R www-data:www-data /var/www/smilesrus/ticket-public
+          sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
+          sudo mkdir -p /var/www/smilesrus/ticket-public/assets/{qrcodes,tickets}
+          sudo chmod -R 775 /var/www/smilesrus/ticket-public/assets
+          EOF

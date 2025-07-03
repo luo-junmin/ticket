@@ -76,7 +76,7 @@ class Ticket {
     private function generateQRCode($ticketCode) {
         $qrCodePath = '/assets/qrcodes/' . $ticketCode . '.png';
 //        $fullPath = __DIR__ . '/../public' . $qrCodePath;
-        $fullPath = PUBLIC_PATH . $qrCodePath;
+        $fullPath = __DIR__ . "/../.." . PUBLIC_PATH . $qrCodePath;
 
         // Create directory if not exists
         if (!file_exists(dirname($fullPath))) {
@@ -208,7 +208,7 @@ class Ticket {
                 <p><strong>" . $this->lang->get('ticket_count') . ":</strong> $ticketCount</p>
                 
                 <h2>" . $this->lang->get('your_tickets') . "</h2>
-                <img src=". PUBLIC_PATH . $qr_code_path." >                
+                <img src=". __DIR__ . "/../.." . PUBLIC_PATH . $qr_code_path." >                
                 <p>" . $this->lang->get('ticket_attachment') . "</p>
                 <p>" . $this->lang->get('ticket_qr_instructions') . "</p>
                 
@@ -264,7 +264,7 @@ class Ticket {
 
             // Add QR code
 //            $pdf->Image($_SERVER['DOCUMENT_ROOT'] .'/ticket/public' . $ticket['qr_code_path'], 140, $pdf->GetY(), 40, 40);
-            $pdf->Image(PUBLIC_PATH . $ticket['qr_code_path'], 140, $pdf->GetY(), 40, 40);
+            $pdf->Image(__DIR__ . "/../.." . PUBLIC_PATH . $ticket['qr_code_path'], 140, $pdf->GetY(), 40, 40);
 
             $pdf->Ln(20);
 
@@ -275,7 +275,7 @@ class Ticket {
         }
 
 //        $pdfPath = $_SERVER['DOCUMENT_ROOT'] .'/ticket/public/assets/tickets/order_' . $orderId . '.pdf';
-        $pdfPath = PUBLIC_PATH.'/assets/tickets/order_' . $orderId . '.pdf';
+        $pdfPath = __DIR__ . "/../.." . PUBLIC_PATH.'/assets/tickets/order_' . $orderId . '.pdf';
         $pdf->Output($pdfPath, 'F');
 
         return $pdfPath;
