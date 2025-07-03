@@ -22,6 +22,8 @@ jobs:
       - name: Add SSH Known Hosts
         run: |
           mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
           ssh-keyscan "${{ secrets.SERVER1_HOST }}" >> ~/.ssh/known_hosts
           ssh-keyscan "${{ secrets.SERVER2_HOST }}" >> ~/.ssh/known_hosts
 
@@ -59,13 +61,32 @@ jobs:
             -e "ssh -o StrictHostKeyChecking=no" \
             ./ ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }}:/var/www/smilesrus/ticket
 
-      - name: Fix permissions after deployment
+#      - name: Fix permissions after deployment
+#        run: |
+#          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }} << 'EOF'
+#          sudo chown -R www-data:www-data /var/www/smilesrus/ticket-public
+#          sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
+#          sudo mkdir -p /var/www/smilesrus/ticket-public/assets/{qrcodes,tickets}
+#          sudo chmod -R 775 /var/www/smilesrus/ticket-public/assets
+#          EOF
+
+      - name: Fix Permissions
         run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }} << 'EOF'
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }} << 'EOF'
+          # Fix ownership
           sudo chown -R www-data:www-data /var/www/smilesrus/ticket-public
-          sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
+          
+          # Ensure directories exist
           sudo mkdir -p /var/www/smilesrus/ticket-public/assets/{qrcodes,tickets}
-          sudo chmod -R 775 /var/www/smilesrus/ticket-public/assets
+          
+          # Set permissions
+          sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
+          sudo find /var/www/smilesrus/ticket-public -type f -exec chmod 664 {} \;
+          sudo chmod -R g+w /var/www/smilesrus/ticket-public/assets
+          
+          # Set ACLs for persistent permissions
+          sudo setfacl -R -d -m u:www-data:rwX /var/www/smilesrus/ticket-public
           EOF
 
   deploy_to_server2:
@@ -84,6 +105,8 @@ jobs:
       - name: Add SSH Known Hosts
         run: |
           mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
           ssh-keyscan "${{ secrets.SERVER2_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Test SSH Connection to Server 2
