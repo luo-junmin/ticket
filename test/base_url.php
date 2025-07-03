@@ -26,3 +26,5 @@ $baseUrl = getBaseUrl2();
 echo "<br>".$baseUrl;
 echo "<br>".SITE_URL;
 echo "<br>".$_SERVER['DOCUMENT_ROOT'];
+echo "<br>".PUBLIC_PATH;
+echo "<br>".UPLOADS_PATH;

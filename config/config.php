@@ -30,13 +30,16 @@ define('SITE_URL', $host.'/ticket');
 define('SITE_EMAIL', 'tickethub.luo@gmail.com');
 define('ADMIN_EMAIL', 'admin@yourdomain.com');
 
+define('PUBLIC_PATH', $_SERVER['DOCUMENT_ROOT'].'/ticket-public');
+define('UPLOADS_PATH', $_SERVER['DOCUMENT_ROOT'].'/ticket-uploads');
+
 // Path configuration
 define('BASE_PATH', '/var/www/html/ticketing-system');
 define('QR_CODE_PATH', BASE_PATH . '/assets/qrcodes/');
 define('QR_CODE_URL', SITE_URL . '/assets/qrcodes/');
 
-define('PUBLIC_PATH', '/var/www/smilesrus/ticket-public');
-define('UPLOADS_PATH', '/var/www/smilesrus/ticket-uploads');
+//define('PUBLIC_PATH', '/var/www/smilesrus/ticket-public');
+//define('UPLOADS_PATH', '/var/www/smilesrus/ticket-uploads');
 
 // Payment configuration
 define('PAYNOW_MERCHANT_ID', 'your_merchant_id');
