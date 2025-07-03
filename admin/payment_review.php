@@ -103,12 +103,12 @@ $pageTitle = $language->get('payment_review');
                                 <div class="receipt-preview">
                                     <h4><?= $language->get('payment_receipt') ?></h4>
                                     <?php if (strpos($payment['file_url'], '.pdf') !== false): ?>
-                                        <a href="<?= SITE_URL . $payment['file_url'] ?>" target="_blank" class="btn btn-secondary">
+                                        <a href="<?= UPLOADS_PATH . $payment['file_url'] ?>" target="_blank" class="btn btn-secondary">
                                             <?= $language->get('view_pdf') ?>
                                         </a>
                                     <?php else: ?>
-                                        <a href="<?= SITE_URL . $payment['file_url'] ?>" target="_blank">
-                                            <img src="<?= SITE_URL . $payment['file_url'] ?>" alt="Receipt" class="img-thumbnail receipt-image">
+                                        <a href="<?= UPLOADS_PATH . $payment['file_url'] ?>" target="_blank">
+                                            <img src="<?= UPLOADS_PATH . $payment['file_url'] ?>" alt="Receipt" class="img-thumbnail receipt-image">
                                         </a>
                                     <?php endif; ?>
                                 </div>

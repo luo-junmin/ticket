@@ -75,7 +75,8 @@ $hasPendingReceipt = $payment->hasPendingReceipt($orderId);
 $pageTitle = $language->get('payment');
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/h_header.php';
 $paynow_image = 'paynow_lwy.png';
-if (SITE_URL == 'http://localhost/ticket') {
+//if (SITE_URL == 'http://localhost/ticket') {
+if (SITE_URL == 'http://localhost') {
     $paynow_image = 'paynow_ljm.jpg';
 }
 ?>
@@ -101,8 +102,7 @@ if (SITE_URL == 'http://localhost/ticket') {
 
             <div class="paynow-qr-container">
                 <p><?= $language->get('scan_paynow_qr') ?></p>
-<!--                <img src="--><?php //= SITE_URL ?><!--/assets/images/paynow_qr.jpg" alt="PayNow QR Code" class="paynow-qr">-->
-                <img src="<?= SITE_URL ?>/assets/images/<?= $paynow_image ?>" alt="PayNow" class="paynow-qr>
+                <img src="<?= SITE_URL ?>/ticket/assets/images/<?= $paynow_image ?>" alt="PayNow" class="paynow-qr>
                 <p><?= $language->get('paynow_reference') ?>: ORDER<?= $orderId ?></p>
                 <p><?= $language->get('amount_to_pay') ?>: $<?= number_format($orderDetails['total_amount'], 2) ?></p>
             </div>

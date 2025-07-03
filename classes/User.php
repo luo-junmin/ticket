@@ -433,7 +433,7 @@ class User {
         if (NULL == $name) {
             $name = "User";
         }
-        $welcomeUrl = SITE_URL;
+        $welcomeUrl = SITE_URL."/ticket";
         $site = "TicketHub";
 
         // 获取邮件模板

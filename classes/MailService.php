@@ -38,7 +38,7 @@ class MailService {
             $this->mailer->addAddress($email, $name);
 
             // 构建变量
-            $verificationUrl = SITE_URL . "/verify_email.php?token=$token&id=$userId";
+            $verificationUrl = SITE_URL . "/ticket/verify_email.php?token=$token&id=$userId";
             $expiryHours = 24;
 
             // 获取邮件模板

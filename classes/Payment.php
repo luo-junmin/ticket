@@ -154,7 +154,7 @@ class Payment {
 
         // Create upload directory if not exists
 //        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/ticket/uploads/receipts/';
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . UPLOADS_PATH. '/receipts/';
+        $uploadDir = UPLOADS_PATH. '/receipts/';
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -168,7 +168,7 @@ class Payment {
         if (move_uploaded_file($file['tmp_name'], $targetPath)) {
             // Save to database
             $now = date('Y-m-d H:i:s');
-            $relativePath = '/uploads/receipts/' . $filename;
+            $relativePath = '/receipts/' . $filename;
             $stmt = $this->pdo->prepare("
                 INSERT INTO payment_receipts 
                 (order_id, user_id, file_url, upload_datetime) 

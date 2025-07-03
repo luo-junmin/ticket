@@ -30,7 +30,7 @@
         <hr>
         <div class="row">
             <div class="col-md-6">
-                <p class="mb-0">&copy; <?= date('Y') ?> <?= SITE_NAME ?>. <?= $lang->get('all_rights_reserved') ?></p>
+                <p class="mb-0">&copy; <?= date('Y') ?> <?= SITE_NAME ?>. ‘/ticket’.<?= $lang->get('all_rights_reserved') ?></p>
             </div>
             <div class="col-md-6">
                 <ul class="list-inline horizontal-footer-nav text-md-end mb-0">

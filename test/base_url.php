@@ -28,3 +28,4 @@ echo "<br>".SITE_URL;
 echo "<br>".$_SERVER['DOCUMENT_ROOT'];
 echo "<br>".PUBLIC_PATH;
 echo "<br>".UPLOADS_PATH;
+echo "<img src='/ticket/assets/images/icons8-search-24.png'>";

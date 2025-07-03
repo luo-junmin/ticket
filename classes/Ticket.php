@@ -167,7 +167,9 @@ class Ticket {
         $eventTitle = $tickets[0]['title'];
         $eventDate = date('Y-m-d H:i', strtotime($tickets[0]['event_date']));
         $location = $tickets[0]['location'];
+        $qr_code_path = $tickets[0]['qr_code_path'];
         $ticketCount = count($tickets);
+
 
         // Create PDF tickets
         $pdfPath = $this->generatePdfTickets($orderId);
@@ -206,6 +208,7 @@ class Ticket {
                 <p><strong>" . $this->lang->get('ticket_count') . ":</strong> $ticketCount</p>
                 
                 <h2>" . $this->lang->get('your_tickets') . "</h2>
+                <img src=". PUBLIC_PATH . $qr_code_path." >                
                 <p>" . $this->lang->get('ticket_attachment') . "</p>
                 <p>" . $this->lang->get('ticket_qr_instructions') . "</p>
                 
@@ -260,7 +263,8 @@ class Ticket {
             $pdf->Cell(0, 10, 'Ticket Code: ' . $ticket['ticket_code'], 0, 1);
 
             // Add QR code
-            $pdf->Image($_SERVER['DOCUMENT_ROOT'] .'/ticket/public' . $ticket['qr_code_path'], 140, $pdf->GetY(), 40, 40);
+//            $pdf->Image($_SERVER['DOCUMENT_ROOT'] .'/ticket/public' . $ticket['qr_code_path'], 140, $pdf->GetY(), 40, 40);
+            $pdf->Image(PUBLIC_PATH . $ticket['qr_code_path'], 140, $pdf->GetY(), 40, 40);
 
             $pdf->Ln(20);
 
