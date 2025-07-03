@@ -31,23 +31,28 @@ jobs:
               "${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }}" \
               "echo 'SSH to Server 1 successful!'"
 
-      - name: Upload via SCP to Server 1
-        uses: appleboy/scp-action@v0.0.5
+#      - name: Upload via SCP to Server 1
+#        uses: appleboy/scp-action@v0.0.5
+#        with:
+#          host: ${{ secrets.SERVER1_HOST }}
+#          username: ${{ secrets.SERVER1_USER }}
+#          key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          port: ${{ secrets.SSH_PORT || 22 }}
+#          target: /var/www/smilesrus/ticket
+#          source: ./
+#          rm: false
+#          excludes: "public uploads"  # 排除这两个目录
+#          overwrite: true
+#          strip_components: 1
+
+      - uses: burnett01/rsync-deployments@5.2.3
         with:
-          host: ${{ secrets.SERVER1_HOST }}
-          username: ${{ secrets.SERVER1_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          target: /var/www/smilesrus/ticket
-          source: ./
-          rm: false
-          excludes: "public uploads"  # 排除这两个目录
-          overwrite: true
-          strip_components: 1
+          switches: -avz --chown=www-data:www-data --chmod=D775,F664
+          remote_path: /var/www/smilesrus/ticket/
 
       - name: Fix permissions after deployment
         run: |
-          ssh -i ${{ secrets.SSH_KEY }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }} << 'EOF'
           sudo chown -R www-data:www-data /var/www/smilesrus/ticket-public
           sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
           sudo mkdir -p /var/www/smilesrus/ticket-public/assets/{qrcodes,tickets}
@@ -78,24 +83,29 @@ jobs:
               "${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }}" \
               "echo 'SSH to Server 2 successful!'"
 
-      - name: Upload via SCP to Server 2
-        uses: appleboy/scp-action@v0.0.5
+#      - name: Upload via SCP to Server 2
+#        uses: appleboy/scp-action@v0.0.5
+#        with:
+#          host: ${{ secrets.SERVER2_HOST }}
+#          username: ${{ secrets.SERVER2_USER }}
+#          key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          port: ${{ secrets.SSH_PORT || 22 }}
+#          target: /var/www/tenglong/ticket
+#          source: ./
+#          rm: false
+#          excludes: "public uploads"  # 排除这两个目录
+#          overwrite: true
+#          timeout: 2m  # 增加超时时间
+#          strip_components: 1
+
+      - uses: burnett01/rsync-deployments@5.2.3
         with:
-          host: ${{ secrets.SERVER2_HOST }}
-          username: ${{ secrets.SERVER2_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          target: /var/www/tenglong/ticket
-          source: ./
-          rm: false
-          excludes: "public uploads"  # 排除这两个目录
-          overwrite: true
-          timeout: 2m  # 增加超时时间
-          strip_components: 1
+          switches: -avz --chown=www-data:www-data --chmod=D775,F664
+          remote_path: /var/www/smilesrus/ticket/
 
       - name: Fix permissions after deployment
         run: |
-          ssh -i ${{ secrets.SSH_KEY }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }} << 'EOF'
           sudo chown -R www-data:www-data /var/www/smilesrus/ticket-public
           sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
           sudo mkdir -p /var/www/smilesrus/ticket-public/assets/{qrcodes,tickets}
