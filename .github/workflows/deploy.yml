@@ -47,28 +47,14 @@ jobs:
 #          overwrite: true
 #          strip_components: 1
 
-#      - uses: burnett01/rsync-deployments@5.2.3
-#        with:
-#          switches: -avz --chown=www-data:www-data --chmod=D775,F664
-#          remote_path: /var/www/smilesrus/ticket/
-
       - name: Install rsync
         run: sudo apt-get update && sudo apt-get install -y rsync
 
-      - name: Deploy via rsync
+      - name: Deploy via rsync to Server 1
         run: |
           rsync -avz --delete \
             -e "ssh -o StrictHostKeyChecking=no" \
             ./ ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }}:/var/www/smilesrus/ticket
-
-#      - name: Fix permissions after deployment
-#        run: |
-#          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SERVER1_USER }}@${{ secrets.SERVER1_HOST }} << 'EOF'
-#          sudo chown -R www-data:www-data /var/www/smilesrus/ticket-public
-#          sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
-#          sudo mkdir -p /var/www/smilesrus/ticket-public/assets/{qrcodes,tickets}
-#          sudo chmod -R 775 /var/www/smilesrus/ticket-public/assets
-#          EOF
 
       - name: Fix Permissions
         run: |
@@ -115,31 +101,45 @@ jobs:
               "${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }}" \
               "echo 'SSH to Server 2 successful!'"
 
-      - name: Upload via SCP to Server 2
-        uses: appleboy/scp-action@v0.0.5
-        with:
-          host: ${{ secrets.SERVER2_HOST }}
-          username: ${{ secrets.SERVER2_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          target: /var/www/tenglong/ticket
-          source: ./
-          rm: false
-          excludes: "public uploads"  # 排除这两个目录
-          overwrite: true
-          timeout: 2m  # 增加超时时间
-          strip_components: 1
-
-#      - uses: burnett01/rsync-deployments@5.2.3
+#      - name: Upload via SCP to Server 2
+#        uses: appleboy/scp-action@v0.0.5
 #        with:
-#          switches: -avz --chown=www-data:www-data --chmod=D775,F664
-#          remote_path: /var/www/smilesrus/ticket/
+#          host: ${{ secrets.SERVER2_HOST }}
+#          username: ${{ secrets.SERVER2_USER }}
+#          key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          port: ${{ secrets.SSH_PORT || 22 }}
+#          target: /var/www/tenglong/ticket
+#          source: ./
+#          rm: false
+#          excludes: "public uploads"  # 排除这两个目录
+#          overwrite: true
+#          timeout: 2m  # 增加超时时间
+#          strip_components: 1
 
-      - name: Fix permissions after deployment
+      - name: Install rsync
+        run: sudo apt-get update && sudo apt-get install -y rsync
+
+      - name: Deploy via rsync to Server 2
         run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} ${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }} << 'EOF'
-          sudo chown -R www-data:www-data /var/www/smilesrus/ticket-public
-          sudo find /var/www/smilesrus/ticket-public -type d -exec chmod 775 {} \;
-          sudo mkdir -p /var/www/smilesrus/ticket-public/assets/{qrcodes,tickets}
-          sudo chmod -R 775 /var/www/smilesrus/ticket-public/assets
+          rsync -avz --delete \
+            -e "ssh -o StrictHostKeyChecking=no" \
+            ./ ${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }}:/var/www/tenglong/ticket
+      
+      - name: Fix Permissions
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER2_USER }}@${{ secrets.SERVER2_HOST }} << 'EOF'
+          # Fix ownership
+          sudo chown -R www-data:www-data /var/www/tenglong/ticket-public
+          
+          # Ensure directories exist
+          sudo mkdir -p /var/www/tenglong/ticket-public/assets/{qrcodes,tickets}
+          
+          # Set permissions
+          sudo find /var/www/tenglong/ticket-public -type d -exec chmod 775 {} \;
+          sudo find /var/www/tenglong/ticket-public -type f -exec chmod 664 {} \;
+          sudo chmod -R g+w /var/www/tenglong/ticket-public/assets
+          
+          # Set ACLs for persistent permissions
+          sudo setfacl -R -d -m u:www-data:rwX /var/www/tenglong/ticket-public
           EOF
