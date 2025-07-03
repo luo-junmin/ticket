@@ -75,7 +75,8 @@ class Ticket {
 
     private function generateQRCode($ticketCode) {
         $qrCodePath = '/assets/qrcodes/' . $ticketCode . '.png';
-        $fullPath = __DIR__ . '/../public' . $qrCodePath;
+//        $fullPath = __DIR__ . '/../public' . $qrCodePath;
+        $fullPath = PUBLIC_PATH . $qrCodePath;
 
         // Create directory if not exists
         if (!file_exists(dirname($fullPath))) {
@@ -269,7 +270,8 @@ class Ticket {
             }
         }
 
-        $pdfPath = $_SERVER['DOCUMENT_ROOT'] .'/ticket/public/assets/tickets/order_' . $orderId . '.pdf';
+//        $pdfPath = $_SERVER['DOCUMENT_ROOT'] .'/ticket/public/assets/tickets/order_' . $orderId . '.pdf';
+        $pdfPath = PUBLIC_PATH.'/assets/tickets/order_' . $orderId . '.pdf';
         $pdf->Output($pdfPath, 'F');
 
         return $pdfPath;

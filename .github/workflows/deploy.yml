@@ -40,7 +40,8 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           target: /var/www/smilesrus/ticket
           source: ./
-          rm: true
+          rm: false
+          excludes: "public uploads"  # 排除这两个目录
           overwrite: true
           strip_components: 1
 
@@ -77,7 +78,8 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           target: /var/www/tenglong/ticket
           source: ./
-          rm: true
+          rm: false
+          excludes: "public uploads"  # 排除这两个目录
           overwrite: true
           timeout: 2m  # 增加超时时间
           strip_components: 1

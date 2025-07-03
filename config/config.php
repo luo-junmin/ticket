@@ -35,6 +35,9 @@ define('BASE_PATH', '/var/www/html/ticketing-system');
 define('QR_CODE_PATH', BASE_PATH . '/assets/qrcodes/');
 define('QR_CODE_URL', SITE_URL . '/assets/qrcodes/');
 
+define('PUBLIC_PATH', '/var/www/smilesrus/ticket-public');
+define('UPLOADS_PATH', '/var/www/smilesrus/ticket-uploads');
+
 // Payment configuration
 define('PAYNOW_MERCHANT_ID', 'your_merchant_id');
 define('PAYNOW_API_KEY', 'your_api_key');
