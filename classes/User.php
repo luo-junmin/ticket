@@ -420,8 +420,16 @@ class User {
         $stmt = $this->pdo->prepare("SELECT email, name FROM users WHERE user_id = ?");
         $stmt->execute([$userId]);
         $user = $stmt->fetch();
+        $site = "TicketHub";
 
         $subject = $this->lang->get('welcome_email_subject');
+
+        // 替换占位符
+        $subject = str_replace(
+            ['{site}'],
+            [$site],
+            $subject
+        );
 
 //        $message = $this->lang->get('welcome_email_body', [
 //            'name' => $user['name'],
@@ -434,7 +442,6 @@ class User {
             $name = "User";
         }
         $welcomeUrl = SITE_URL."/ticket";
-        $site = "TicketHub";
 
         // 获取邮件模板
         $emailTemplate = $this->lang->get('welcome_email_body');

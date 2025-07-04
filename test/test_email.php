@@ -11,7 +11,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] .'/ticket//includes/autoload.php';
 //    1
 //);
 $user = new User();
-$result = $user->sendWelcomeEmail(3);
+$result = $user->sendWelcomeEmail(2);
 if ($result) {
     echo "Email sent successfully!";
 } else {
