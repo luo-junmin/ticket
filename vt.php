@@ -54,6 +54,50 @@
             cursor: pointer;
             margin: 5px;
         }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .processing {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .valid {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .invalid {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        #interactive {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            border: 2px solid #ddd;
+            overflow: hidden;
+        }
+
+        #interactive canvas.drawing, #interactive canvas.drawingBuffer {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
     </style>
 </head>
 <body>
@@ -118,6 +162,141 @@
     document.getElementById('startButton').addEventListener('click', startScanner);
     document.getElementById('stopButton').addEventListener('click', stopScanner);
 
+    // function startScanner() {
+    //     Quagga.init({
+    //         inputStream: {
+    //             name: "Live",
+    //             type: "LiveStream",
+    //             target: document.querySelector('#interactive'),
+    //             constraints: {
+    //                 width: 480,
+    //                 height: 320,
+    //                 facingMode: "environment"
+    //             },
+    //         },
+    //         decoder: {
+    //             readers: ["qrcode_reader"]
+    //         },
+    //     }, function(err) {
+    //         if (err) {
+    //             console.error(err);
+    //             document.getElementById('result').textContent = translations[currentLang].noCamera;
+    //             return;
+    //         }
+    //         document.getElementById('startButton').disabled = true;
+    //         document.getElementById('stopButton').disabled = false;
+    //         document.getElementById('result').textContent = translations[currentLang].scanning;
+    //         Quagga.start();
+    //     });
+    //
+    //     Quagga.onDetected(function(result) {
+    //         const code = result.codeResult.code;
+    //         stopScanner();
+    //         validateTicket(code);
+    //     });
+    // }
+
+    function stopScanner() {
+        Quagga.stop();
+        document.getElementById('startButton').disabled = false;
+        document.getElementById('stopButton').disabled = true;
+    }
+
+    // function validateTicket(ticketCode) {
+    //     fetch('api/validate_ticket.php?lang=' + currentLang, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({ ticket_code: ticketCode })
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             const resultDiv = document.getElementById('result');
+    //             if (data.success) {
+    //                 resultDiv.className = 'valid';
+    //                 resultDiv.innerHTML = `
+    //                     <h3>${translations[currentLang].scanSuccess}</h3>
+    //                     <p>${data.ticket.status}</p>
+    //                     <p><strong>${data.ticket.welcome_message}</strong></p>
+    //                     <p>Ticket Code: ${data.ticket.code}</p>
+    //                 `;
+    //             } else {
+    //                 resultDiv.className = 'invalid';
+    //                 resultDiv.textContent = data.message;
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error('Error:', error);
+    //             document.getElementById('result').textContent = 'Error validating ticket';
+    //         });
+    // }
+
+    // 初始化语言
+    setLanguage(currentLang);
+</script>
+<script>
+    // 更新validateTicket函数，添加详细错误处理
+    async function validateTicket(ticketCode) {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '<p>Processing...</p>';
+        resultDiv.className = 'processing';
+
+        try {
+            // 添加请求超时处理
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const response = await fetch('api/validate_ticket.php?lang=' + currentLang, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ticket_code: ticketCode }),
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            console.log('API Response:', data); // 调试输出
+
+            if (data.success) {
+                resultDiv.className = 'valid';
+                resultDiv.innerHTML = `
+                <h3>${translations[currentLang].scanSuccess}</h3>
+                <p>${data.ticket?.status || translations[currentLang].ticketValid}</p>
+                <p><strong>${data.ticket?.welcome_message || translations[currentLang].welcome}</strong></p>
+                <p>Ticket Code: ${data.ticket?.code || ticketCode}</p>
+            `;
+            } else {
+                resultDiv.className = 'invalid';
+                resultDiv.innerHTML = `
+                <h3>${translations[currentLang].scanSuccess}</h3>
+                <p>${data.message || 'Validation failed'}</p>
+            `;
+            }
+        } catch (error) {
+            console.error('Validation Error:', error);
+            resultDiv.className = 'invalid';
+
+            if (error.name === 'AbortError') {
+                resultDiv.innerHTML = `<p>${translations[currentLang].timeout || 'Request timeout'}</p>`;
+            } else {
+                resultDiv.innerHTML = `
+                <p>${translations[currentLang].error || 'Error'}: ${error.message}</p>
+                <p>Please check your connection and try again</p>
+            `;
+            }
+        }
+    }
+
+    // 在Quagga初始化中添加错误处理
     function startScanner() {
         Quagga.init({
             inputStream: {
@@ -131,65 +310,67 @@
                 },
             },
             decoder: {
-                readers: ["qrcode_reader"]
+                readers: ["qrcode_reader"],
+                debug: {
+                    drawBoundingBox: true,
+                    showFrequency: true,
+                    drawScanline: true,
+                    showPattern: true
+                }
             },
+            locator: {
+                patchSize: "medium",
+                halfSample: true
+            },
+            locate: true
         }, function(err) {
             if (err) {
-                console.error(err);
-                document.getElementById('result').textContent = translations[currentLang].noCamera;
+                console.error('Quagga init error:', err);
+                document.getElementById('result').innerHTML = `
+                <p class="error">${translations[currentLang].noCamera}</p>
+                <p>Error details: ${err.message}</p>
+                <p>Please ensure camera access is allowed</p>
+            `;
                 return;
             }
             document.getElementById('startButton').disabled = true;
             document.getElementById('stopButton').disabled = false;
-            document.getElementById('result').textContent = translations[currentLang].scanning;
+            document.getElementById('result').innerHTML = `<p>${translations[currentLang].scanning}</p>`;
             Quagga.start();
+
+            // 添加调试绘制
+            Quagga.onProcessed(function(result) {
+                const drawingCtx = Quagga.canvas.ctx.overlay;
+                const drawingCanvas = Quagga.canvas.dom.overlay;
+
+                if (result) {
+                    if (result.boxes) {
+                        drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+                        result.boxes.filter(function(box) {
+                            return box !== result.box;
+                        }).forEach(function(box) {
+                            Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
+                        });
+                    }
+
+                    if (result.box) {
+                        Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "blue", lineWidth: 2});
+                    }
+
+                    if (result.codeResult && result.codeResult.code) {
+                        Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
+                    }
+                }
+            });
         });
 
         Quagga.onDetected(function(result) {
+            console.log('Detection result:', result); // 调试输出
             const code = result.codeResult.code;
             stopScanner();
             validateTicket(code);
         });
     }
-
-    function stopScanner() {
-        Quagga.stop();
-        document.getElementById('startButton').disabled = false;
-        document.getElementById('stopButton').disabled = true;
-    }
-
-    function validateTicket(ticketCode) {
-        fetch('api/validate_ticket.php?lang=' + currentLang, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ ticket_code: ticketCode })
-        })
-            .then(response => response.json())
-            .then(data => {
-                const resultDiv = document.getElementById('result');
-                if (data.success) {
-                    resultDiv.className = 'valid';
-                    resultDiv.innerHTML = `
-                        <h3>${translations[currentLang].scanSuccess}</h3>
-                        <p>${data.ticket.status}</p>
-                        <p><strong>${data.ticket.welcome_message}</strong></p>
-                        <p>Ticket Code: ${data.ticket.code}</p>
-                    `;
-                } else {
-                    resultDiv.className = 'invalid';
-                    resultDiv.textContent = data.message;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('result').textContent = 'Error validating ticket';
-            });
-    }
-
-    // 初始化语言
-    setLanguage(currentLang);
 </script>
 </body>
 </html>

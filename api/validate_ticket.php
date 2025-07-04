@@ -1,6 +1,8 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
 
 include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
 
@@ -9,6 +11,17 @@ $db_host = DB_HOST;
 $db_name = DB_NAME;
 $db_user = DB_USER;
 $db_pass = DB_PASS;
+
+// 启用错误报告用于调试
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// 模拟响应用于测试（正式环境应移除）
+// echo json_encode(['success' => true, 'message' => 'Test response', 'ticket' => ['code' => 'TEST123', 'status' => 'Valid', 'welcome_message' => 'Welcome!']]);
+// exit;
+
+$response = ['success' => false, 'message' => 'Initialization error'];
+
 
 // 支持的语言
 $supported_langs = ['en', 'zh'];
@@ -35,8 +48,24 @@ $messages = [
 ];
 
 try {
+    // 获取原始POST数据
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
+
+    // 记录接收到的数据（调试用）
+    file_put_contents('api_log.txt', date('Y-m-d H:i:s')." - Received: ".$input.PHP_EOL, FILE_APPEND);
+
+    if (!$data || !isset($data['ticket_code'])) {
+        $response['message'] = 'Invalid request data';
+        echo json_encode($response);
+        exit;
+    }
+
+
     $conn = new PDO("mysql:host=$db_host;dbname=$db_name", $db_user, $db_pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    $ticket_code = $data['ticket_code'];
 
     // 检查请求方法
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -87,5 +116,13 @@ try {
     }
 } catch(PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+} catch(Exception $e) {
+    $response['message'] = 'System error: ' . $e->getMessage();
 }
+
+// 记录响应数据（调试用）
+file_put_contents('api_log.txt', date('Y-m-d H:i:s')." - Response: ".json_encode($response).PHP_EOL, FILE_APPEND);
+
+echo json_encode($response);
+
 ?>
