@@ -11,7 +11,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket Scanner - 票务扫描</title>
-    <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
+    <!-- 使用官方CDN并指定确切版本 -->
+    <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>-->
+<!--    <script src="/ticket/assets/js/quagga.min.js"></script>-->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -292,6 +295,72 @@
             `;
             }
         }
+    }
+
+    function initScanner() {
+        // 检查浏览器支持
+        if (!navigator.mediaDevices || !window.BarcodeDetector) {
+            console.error('Barcode scanning not supported in this browser');
+            return;
+        }
+
+        // 更健壮的Quagga初始化
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#scanner-container'),
+                constraints: {
+                    width: 640,
+                    height: 480,
+                    facingMode: "environment",
+                    aspectRatio: { min: 1, max: 2 }
+                },
+            },
+            decoder: {
+                readers: [
+                    "code_128_reader",
+                    "ean_reader",
+                    "ean_8_reader",
+                    "code_39_reader",
+                    "code_39_vin_reader",
+                    "codabar_reader",
+                    "upc_reader",
+                    "upc_e_reader",
+                    "qrcode_reader"
+                ],
+                debug: {
+                    drawBoundingBox: false,
+                    showFrequency: false,
+                    drawScanline: false,
+                    showPattern: false
+                }
+            },
+            locate: true,
+            frequency: 10
+        }, function(err) {
+            if (err) {
+                console.error('Quagga initialization failed', err);
+                document.getElementById('result').innerHTML =
+                    '<p class="error">Scanner initialization failed: ' + err.message + '</p>';
+                return;
+            }
+            console.log('Quagga initialization succeeded');
+            Quagga.start();
+        });
+
+        // 更健壮的检测处理
+        Quagga.onDetected(function(result) {
+            if (!result || !result.codeResult) {
+                console.warn('Detection without valid result');
+                return;
+            }
+
+            console.log('Barcode detected', result.codeResult);
+            const code = result.codeResult.code;
+            stopScanner();
+            validateTicket(code);
+        });
     }
 
     // 在Quagga初始化中添加错误处理
