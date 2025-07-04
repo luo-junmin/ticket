@@ -208,12 +208,15 @@ class Ticket {
                 <p><strong>" . $this->lang->get('ticket_count') . ":</strong> $ticketCount</p>
                 
                 <h2>" . $this->lang->get('your_tickets') . "</h2>
-                <img src=". __DIR__ . "/../.." . PUBLIC_PATH . $qr_code_path." >                
+
+                <p>" . $this->lang->get('your_ticket_qr_code') . "</p>
+                <img src='cid:ticket_qr' alt='Ticket QR Code' style='border:1px solid #ddd; padding:10px; background:#fff;'>
                 <p>" . $this->lang->get('ticket_attachment') . "</p>
-                <p>" . $this->lang->get('ticket_qr_instructions') . "</p>
-                
                 <p>" . $this->lang->get('contact_support') . "</p>
             ";
+
+        // 7. 嵌入二维码图片到邮件正文
+        $mail->addEmbeddedImage($_SERVER['DOCUMENT_ROOT'] . PUBLIC_PATH . $qr_code_path, 'ticket_qr');
 
             // Attach PDF
             $mail->addAttachment($pdfPath, 'Tickets_Order_' . $orderId . '.pdf');
