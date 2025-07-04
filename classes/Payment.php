@@ -154,7 +154,7 @@ class Payment {
 
         // Create upload directory if not exists
 //        $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/ticket/uploads/receipts/';
-        $uploadDir = UPLOADS_PATH. '/receipts/';
+        $uploadDir = __DIR__ . "/../.." . UPLOADS_PATH. '/receipts/';
         if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
