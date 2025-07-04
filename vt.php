@@ -34,14 +34,14 @@
             padding: 15px;
             border-radius: 5px;
         }
-        .valid {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .invalid {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
+        /*.valid {*/
+        /*    background-color: #d4edda;*/
+        /*    color: #155724;*/
+        /*}*/
+        /*.invalid {*/
+        /*    background-color: #f8d7da;*/
+        /*    color: #721c24;*/
+        /*}*/
         .language-switcher {
             margin-bottom: 20px;
         }
@@ -61,7 +61,6 @@
             border-radius: 5px;
             transition: all 0.3s ease;
         }
-
         .processing {
             background-color: #fff3cd;
             color: #856404;
@@ -234,8 +233,7 @@
 
     // 初始化语言
     setLanguage(currentLang);
-</script>
-<script>
+
     // 更新validateTicket函数，添加详细错误处理
     async function validateTicket(ticketCode) {
         const resultDiv = document.getElementById('result');
