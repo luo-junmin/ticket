@@ -459,6 +459,10 @@
 
         fetch(`scan_ticket.php?lang=${currentLang}`, {
             method: "POST",
+            headers: {
+                'X-API-KEY': '您的安全API密钥'  // 确保与服务器一致
+            },
+
             body: formData
         })
             .then(response => {
@@ -553,7 +557,93 @@
     //     }
     // }
 
+    // 修改扫描初始化代码
+    async function initScanner() {
+        try {
+            // 检查摄像头支持
+            const hasCamera = await checkCameraAvailability();
+            if (hasCamera) {
+                await startCameraScanner();
+            } else {
+                showManualInputOption();
+            }
+        } catch (error) {
+            console.error("初始化错误:", error);
+            showManualInputOption();
+        }
+    }
 
+    async function checkCameraAvailability() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            return devices.some(device => device.kind === 'videoinput');
+        } catch (error) {
+            console.warn("摄像头检测失败:", error);
+            return false;
+        }
+    }
+
+    // 全局错误处理
+    window.addEventListener('error', (event) => {
+        console.error("全局捕获的错误:", event.error);
+
+        // 显示用户友好的错误信息
+        const errorMessage = `
+    <div class="error-alert">
+      <h3>系统遇到问题</h3>
+      <p>${getUserFriendlyError(event.error)}</p>
+      <button onclick="location.reload()">刷新页面</button>
+    </div>
+  `;
+
+        document.body.insertAdjacentHTML('beforeend', errorMessage);
+    });
+
+    function getUserFriendlyError(error) {
+        const errorMap = {
+            'NotFoundError': '未找到摄像头设备',
+            'NotAllowedError': '摄像头访问被拒绝',
+            '403': 'API验证失败，请联系管理员',
+            'NetworkError': '网络连接出现问题'
+        };
+
+        return errorMap[error.name] || errorMap[error.status] || '未知错误，请重试';
+    }
+
+    // 设备能力检测
+    function checkDeviceCapabilities() {
+        return {
+            hasCamera: 'mediaDevices' in navigator && 'enumerateDevices' in navigator.mediaDevices,
+            isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+            isSecure: window.location.protocol === 'https:'
+        };
+    }
+
+    // 根据设备能力初始化
+    async function initBasedOnDevice() {
+        const capabilities = checkDeviceCapabilities();
+        const scannerSection = document.getElementById('scanner-section');
+        const manualSection = document.getElementById('manual-input-section');
+
+        if (capabilities.hasCamera && capabilities.isSecure) {
+            scannerSection.style.display = 'block';
+            manualSection.style.display = 'none';
+            try {
+                await initScanner();
+            } catch (error) {
+                scannerSection.style.display = 'none';
+                manualSection.style.display = 'block';
+            }
+        } else {
+            scannerSection.style.display = 'none';
+            manualSection.style.display = 'block';
+            document.getElementById('camera-warning').style.display = 'block';
+        }
+    }
+
+    // 页面加载时初始化
+    window.addEventListener('DOMContentLoaded', initBasedOnDevice);
+    
     // 初始化
     window.onload = startScanner;
 </script>
