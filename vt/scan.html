@@ -116,10 +116,59 @@
     ↕️ 切换手动输入 / Toggle Manual Entry
 </button>
 
+<button id="switchCameraBtn" style="margin-top: 10px;">
+
+    切换摄像头 / Switch Camera
+</button>
 
 <script>
     // 在全局变量中存储Worker实例
     let scanWorker = null;
+    let currentCameraIndex = 0;
+    let availableCameras = [];
+
+    // 获取所有摄像头
+    async function getCameras() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            availableCameras = devices.filter(device => device.kind === 'videoinput');
+            return availableCameras;
+        } catch (error) {
+            console.error('Error getting cameras:', error);
+            return [];
+        }
+    }
+
+    // 切换摄像头
+    async function switchCamera() {
+        if (availableCameras.length < 2) return;
+
+        currentCameraIndex = (currentCameraIndex + 1) % availableCameras.length;
+        const cameraId = availableCameras[currentCameraIndex].deviceId;
+
+        // 重启扫描器使用新摄像头
+        if (window.Worker) {
+            stopWorkerScanner();
+            startWorkerScanner(cameraId);
+        } else {
+            if (window.currentScanner) {
+                window.currentScanner.stop().then(() => {
+                    startMainThreadScanner(cameraId);
+                });
+            }
+        }
+    }
+
+    // 初始化时获取摄像头
+    document.getElementById('switchCameraBtn').addEventListener('click', switchCamera);
+
+    // 在页面加载时获取摄像头列表
+    window.addEventListener('load', async () => {
+        await getCameras();
+        if (availableCameras.length > 1) {
+            document.getElementById('switchCameraBtn').style.display = 'inline-block';
+        }
+    });
 
     // 启动Worker扫描器
     function startWorkerScanner() {
@@ -153,8 +202,8 @@
                 case 'error':
                     console.error('Worker error:', error);
                     document.getElementById('result').innerHTML = `
-          <p class="error">Scanner error: ${error}</p>
-        `;
+                      <p class="error">Scanner error: ${error}</p>
+                    `;
                     break;
             }
         };
@@ -163,6 +212,7 @@
         scanWorker.postMessage({
             action: 'start',
             config: {
+                cameraId: cameraId,  // 传入特定的摄像头ID
                 fps: 10,
                 qrbox: { width: 250, height: 250 }
             }
@@ -438,7 +488,7 @@
         startScanner();
     }
 
-    // 启动扫描器
+    //启动扫描器
     function startScanner() {
         if (qrCodeScanner && qrCodeScanner.isScanning) {
             qrCodeScanner.stop();
@@ -478,6 +528,31 @@
                 `;
         });
     }
+
+    // async function startScanner() {
+    //     try {
+    //         // 获取后置摄像头ID
+    //         const backCameraId = await getBackCamera();
+    //
+    //         if (!backCameraId) {
+    //             throw new Error('无法找到后置摄像头');
+    //         }
+    //
+    //         if (window.Worker) {
+    //             // 使用Worker的实现
+    //             startWorkerScanner(backCameraId);
+    //         } else {
+    //             // 非Worker实现
+    //             startMainThreadScanner(backCameraId);
+    //         }
+    //     } catch (error) {
+    //         console.error('摄像头初始化错误:', error);
+    //         document.getElementById('result').innerHTML = `
+    //   <p class="error">${translations[currentLang].noCamera}: ${error.message}</p>
+    // `;
+    //     }
+    // }
+
 
     // 初始化
     window.onload = startScanner;
