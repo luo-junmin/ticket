@@ -2,20 +2,63 @@
 /**
  * scan_ticket.php
  */
-header("Content-Type: application/json; charset=UTF-8");
-include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
+// 禁用HTML错误输出
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/php_errors.log');
 
-// 验证API密钥
-$validApiKey = API_KEY;
-$providedApiKey = $_SERVER['HTTP_X_API_KEY'] ?? '';
-if ($providedApiKey !== $validApiKey) {
-    http_response_code(403);
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: X-API-KEY, X-CLIENT-IP, Content-Type");
+
+// 处理OPTIONS预检请求
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
     exit;
 }
 
+include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
+
+// 验证请求方法
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    die(json_encode(['status' => 'error', 'message' => '仅允许POST请求']));
+}
+
+// 获取客户端IP（考虑代理情况）
+$clientIp = $_SERVER['HTTP_X_CLIENT_IP'] ??
+    $_SERVER['HTTP_CLIENT_IP'] ??
+    $_SERVER['HTTP_X_FORWARDED_FOR'] ??
+    $_SERVER['REMOTE_ADDR'] ?? '';
+
+
+$receivedKey = $_SERVER['HTTP_X_API_KEY'];
+$clientIp = $_SERVER['HTTP_X_CLIENT_IP'] ?? '';
+trigger_error("receivedKey ".$receivedKey);
+trigger_error("clientIp ".$clientIp);
+
+// 验证动态密钥
+$expectedKey = hash('sha256', API_KEY . $clientIp);
+trigger_error("expectedKey ".$expectedKey);
+
+if (!hash_equals($expectedKey, $receivedKey)) {
+    error_log("API密钥验证失败: 预期[$expectedKey] 实际[$receivedKey] IP[$clientIp]");
+    http_response_code(403);
+    die(json_encode(['status' => 'error', 'message' => 'Invalid API key']));
+}
+
+// 手动输入的票号验证
+$ticketCode = $_POST['ticket_code'] ?? '';
+if (empty($ticketCode)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => '缺少票号参数']);
+    exit;
+}
+
+
 // 限制请求频率
-session_start();
+//session_start();
 $rateLimitKey = 'rate_limit_' . md5($_SERVER['REMOTE_ADDR']);
 $currentTime = time();
 

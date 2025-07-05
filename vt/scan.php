@@ -1,3 +1,11 @@
+<?php
+// 加载配置文件
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
+
+// 生成动态密钥（示例：密钥+IP的哈希）
+$dynamicKey = hash('sha256', API_KEY . $_SERVER['REMOTE_ADDR']);
+?>
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -122,6 +130,11 @@
 </button>
 
 <script>
+    const API_CONFIG = {
+        apiKey: "<?php echo hash('sha256', API_KEY . $_SERVER['REMOTE_ADDR']); ?>",
+        clientIp: "<?php echo $_SERVER['REMOTE_ADDR']; ?>"
+    };
+
     // 在全局变量中存储Worker实例
     let scanWorker = null;
     let currentCameraIndex = 0;
@@ -454,19 +467,32 @@
         resultDiv.className = '';
         resultDiv.innerHTML = `<p>${translations[currentLang].scanning}</p>`;
 
-        const formData = new FormData();
-        formData.append('ticket_code', code);
+        // const formData = new FormData();
+        // formData.append('ticket_code', code);
+        // console.log(formData);
+
+        // 使用URLSearchParams替代FormData
+        const params = new URLSearchParams();
+        params.append('ticket_code', code);
 
         fetch(`scan_ticket.php?lang=${currentLang}`, {
             method: "POST",
             headers: {
-                'X-API-KEY': '您的安全API密钥'  // 确保与服务器一致
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-API-KEY': API_CONFIG.apiKey,
+                'X-CLIENT-IP': API_CONFIG.clientIp
             },
-
-            body: formData
+            body: params
         })
             .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
+                // if (!response.ok) throw new Error('Network response was not ok');
+                // return response.json();
+                if (!response.ok) {
+                    // 尝试获取更详细的错误信息
+                    return response.text().then(text => {
+                        throw new Error(`${response.status}: ${text}`);
+                    });
+                }
                 return response.json();
             })
             // .then(data => showResult(data))
@@ -514,7 +540,7 @@
                         validateTicket(qrCodeMessage);
                     },
                     errorMessage => {
-                        console.error(errorMessage);
+                        // console.error(errorMessage);
                     }
                 ).catch(err => {
                     console.error(err);
@@ -622,8 +648,10 @@
     // 根据设备能力初始化
     async function initBasedOnDevice() {
         const capabilities = checkDeviceCapabilities();
-        const scannerSection = document.getElementById('scanner-section');
-        const manualSection = document.getElementById('manual-input-section');
+        // const scannerSection = document.getElementById('scanner-section');
+        const scannerSection = document.getElementById('worker-scanner');
+        // const manualSection = document.getElementById('manual-input-section');
+        const manualSection = document.getElementById('manualEntry');
 
         if (capabilities.hasCamera && capabilities.isSecure) {
             scannerSection.style.display = 'block';
@@ -637,13 +665,13 @@
         } else {
             scannerSection.style.display = 'none';
             manualSection.style.display = 'block';
-            document.getElementById('camera-warning').style.display = 'block';
+            // document.getElementById('camera-warning').style.display = 'block';
         }
     }
 
     // 页面加载时初始化
     window.addEventListener('DOMContentLoaded', initBasedOnDevice);
-    
+
     // 初始化
     window.onload = startScanner;
 </script>
