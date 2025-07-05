@@ -10,11 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $db_pass = DB_PASS;
 
     $ticket_code = $_POST['ticket_code'];
-//    $pdo = new PDO('mysql:host=localhost;dbname=your_db;charset=utf8', 'your_user', 'your_pass');
     $pdo = new PDO('mysql:host = $db_host; dbname = $db_name; charset=utf8', $db_user, $db_pass);
     $stmt = $pdo->prepare("SELECT * FROM tickets WHERE ticket_code = ?");
-    $stmt->execute([$ticket_code]);
+    $params = array($ticket_code);
+//    $stmt->bindParam(':ticket_code', $ticket_code);
+    trigger_error(print_r($stmt,true));
+    $stmt->execute($params);
     $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
+    trigger_error(print_r($ticket,true));
 
     header('Content-Type: application/json');
     if (!$ticket) {
@@ -79,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         },
         qrCodeMessage => {
             qrCodeScanner.stop(); // 扫到后暂停
+            console.log(qrCodeMessage);
             validateTicket(qrCodeMessage);
             setTimeout(() => location.reload(), 4000); // 4秒后重启
         }

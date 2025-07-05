@@ -25,8 +25,6 @@ function getBaseUrl($option='host') {
 $host = getBaseUrl();
 // Site configuration
 define('SITE_NAME', 'TicketHub');
-//define('SITE_URL', 'http://localhost/ticket');
-//define('SITE_URL', $host.'');
 define('SITE_URL', $host);
 define('SITE_EMAIL', 'tickethub.luo@gmail.com');
 define('ADMIN_EMAIL', 'admin@yourdomain.com');
@@ -34,13 +32,7 @@ define('ADMIN_EMAIL', 'admin@yourdomain.com');
 define('PUBLIC_PATH', '/ticket-public');
 define('UPLOADS_PATH', '/ticket-uploads');
 
-// Path configuration
-//define('BASE_PATH', '/var/www/html/ticketing-system');
-//define('QR_CODE_PATH', BASE_PATH . '/assets/qrcodes/');
-//define('QR_CODE_URL', SITE_URL . '/ticket/assets/qrcodes/');
-
-//define('PUBLIC_PATH', '/var/www/smilesrus/ticket-public');
-//define('UPLOADS_PATH', '/var/www/smilesrus/ticket-uploads');
+define('API_KEY', 'YOUR_SECURE_API_KEY_123');
 
 // Payment configuration
 define('PAYNOW_MERCHANT_ID', 'your_merchant_id');
@@ -55,6 +47,5 @@ error_reporting(E_ALL);
 date_default_timezone_set('Asia/Singapore');
 
 // Initialize language
-//require_once BASE_PATH . '/classes/Language.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .  '/ticket/classes/Language.php';
 $language = new Language();
