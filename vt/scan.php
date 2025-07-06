@@ -21,8 +21,11 @@ $dynamicKey = hash('sha256', API_KEY . $_SERVER['REMOTE_ADDR']);
 <body>
 <!-- 语言切换 -->
 <div class="language-switcher">
-    <button class="language-btn active" onclick="scanner.setLanguage('zh')">中文</button>
-    <button class="language-btn" onclick="scanner.setLanguage('en')">English</button>
+<!--    <button class="language-btn active" onclick="scanner.setLanguage('zh')">中文</button>-->
+<!--    <button class="language-btn" onclick="scanner.setLanguage('en')">English</button>-->
+    <!-- 修改后 -->
+    <button class="language-btn active" id="lang-zh">中文</button>
+    <button class="language-btn" id="lang-en">English</button>
 </div>
 
 <!-- 主标题 -->
@@ -38,9 +41,11 @@ $dynamicKey = hash('sha256', API_KEY . $_SERVER['REMOTE_ADDR']);
     <button id="restartBtn" class="restart-btn">
         <span id="restartText">重新扫描 / Scan Again</span>
     </button>
+</div>
 
     <!-- 手动输入区域 -->
-    <div id="manualEntry">
+<!--    <div id="manualEntry">-->
+    <div id="manualEntry" style="margin-top: 20px; display: none;">
         <h3 id="manualTitle">手动输入票号 / Manual Entry</h3>
         <input type="text" id="manualTicketCode" placeholder="输入票号 / Enter ticket code">
         <button id="validateBtn">验证 / Validate</button>
@@ -56,7 +61,6 @@ $dynamicKey = hash('sha256', API_KEY . $_SERVER['REMOTE_ADDR']);
         <div class="spinner"></div>
         <p>初始化摄像头...</p>
     </div>
-</div>
 
 <!-- 控制按钮 -->
 <button id="toggleManualBtn">↕️ 切换手动输入 / Toggle Manual Entry</button>
