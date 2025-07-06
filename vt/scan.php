@@ -569,47 +569,47 @@ $dynamicKey = hash('sha256', API_KEY . $_SERVER['REMOTE_ADDR']);
         startScanner();
     }
 
-    //启动扫描器
-    // function startScanner() {
-    //     if (qrCodeScanner && qrCodeScanner.isScanning) {
-    //         qrCodeScanner.stop();
-    //     }
-    //
-    //     Html5Qrcode.getCameras().then(cameras => {
-    //         if (cameras && cameras.length) {
-    //             qrCodeScanner = new Html5Qrcode("reader");
-    //
-    //             qrCodeScanner.start(
-    //                 cameras[0].id,  // 使用第一个摄像头
-    //                 {
-    //                     fps: 10,
-    //                     qrbox: { width: 250, height: 250 },
-    //                     disableFlip: false
-    //                 },
-    //                 qrCodeMessage => {
-    //                     qrCodeScanner.stop();
-    //                     validateTicket(qrCodeMessage);
-    //                 },
-    //                 errorMessage => {
-    //                     // console.error(errorMessage);
-    //                 }
-    //             ).catch(err => {
-    //                 console.error(err);
-    //                 document.getElementById('result').innerHTML = `
-    //                         <p class="error">${translations[currentLang].noCamera}</p>
-    //                     `;
-    //             });
-    //         } else {
-    //             throw new Error(translations[currentLang].noCamera);
-    //         }
-    //     }).catch(err => {
-    //         console.error(err);
-    //         document.getElementById('result').innerHTML = `
-    //                 <p class="error">${translations[currentLang].noCamera}</p>
-    //             `;
-    //     });
-    // }
-    //
+    // 启动扫描器
+    function startScanner() {
+        if (qrCodeScanner && qrCodeScanner.isScanning) {
+            qrCodeScanner.stop();
+        }
+
+        Html5Qrcode.getCameras().then(cameras => {
+            if (cameras && cameras.length) {
+                qrCodeScanner = new Html5Qrcode("reader");
+
+                qrCodeScanner.start(
+                    cameras[0].id,  // 使用第一个摄像头
+                    {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 },
+                        disableFlip: false
+                    },
+                    qrCodeMessage => {
+                        qrCodeScanner.stop();
+                        validateTicket(qrCodeMessage);
+                    },
+                    errorMessage => {
+                        // console.error(errorMessage);
+                    }
+                ).catch(err => {
+                    console.error(err);
+                    document.getElementById('result').innerHTML = `
+                            <p class="error">${translations[currentLang].noCamera}</p>
+                        `;
+                });
+            } else {
+                throw new Error(translations[currentLang].noCamera);
+            }
+        }).catch(err => {
+            console.error(err);
+            document.getElementById('result').innerHTML = `
+                    <p class="error">${translations[currentLang].noCamera}</p>
+                `;
+        });
+    }
+
 
     // 摄像头配置
     // const cameraConfig = {
@@ -619,46 +619,46 @@ $dynamicKey = hash('sha256', API_KEY . $_SERVER['REMOTE_ADDR']);
     //     fps: 10
     // };
 
-    async function startScanner() {
-        try {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoDevices = devices.filter(d => d.kind === 'videoinput');
-
-            // 优先选择后置摄像头
-            const backCamera = videoDevices.find(d =>
-                d.label.toLowerCase().includes('back') ||
-                d.label.toLowerCase().includes('rear') ||
-                d.label.toLowerCase().includes('environment')
-            );
-
-            const cameraId = backCamera ? backCamera.deviceId :
-                { exact: cameraConfig.preferredCamera };
-
-            if (window.html5QrCode) {
-                await window.html5QrCode.stop();
-            }
-
-            window.html5QrCode = new Html5Qrcode("reader");
-            await window.html5QrCode.start(
-                cameraId,
-                {
-                    fps: cameraConfig.fps,
-                    qrbox: cameraConfig.qrbox
-                },
-                qrCodeMessage => {
-                    validateTicket(qrCodeMessage);
-                },
-                errorMessage => {
-                    console.error(`扫描错误: ${errorMessage}`);
-                }
-            );
-
-            console.log("摄像头已启动:", backCamera?.label || "默认摄像头");
-        } catch (error) {
-            console.error("摄像头初始化失败:", error);
-            fallbackToManualInput();
-        }
-    }
+    // async function startScanner() {
+    //     try {
+    //         const devices = await navigator.mediaDevices.enumerateDevices();
+    //         const videoDevices = devices.filter(d => d.kind === 'videoinput');
+    //
+    //         // 优先选择后置摄像头
+    //         const backCamera = videoDevices.find(d =>
+    //             d.label.toLowerCase().includes('back') ||
+    //             d.label.toLowerCase().includes('rear') ||
+    //             d.label.toLowerCase().includes('environment')
+    //         );
+    //
+    //         const cameraId = backCamera ? backCamera.deviceId :
+    //             { exact: cameraConfig.preferredCamera };
+    //
+    //         if (window.html5QrCode) {
+    //             await window.html5QrCode.stop();
+    //         }
+    //
+    //         window.html5QrCode = new Html5Qrcode("reader");
+    //         await window.html5QrCode.start(
+    //             cameraId,
+    //             {
+    //                 fps: cameraConfig.fps,
+    //                 qrbox: cameraConfig.qrbox
+    //             },
+    //             qrCodeMessage => {
+    //                 validateTicket(qrCodeMessage);
+    //             },
+    //             errorMessage => {
+    //                 console.error(`扫描错误: ${errorMessage}`);
+    //             }
+    //         );
+    //
+    //         console.log("摄像头已启动:", backCamera?.label || "默认摄像头");
+    //     } catch (error) {
+    //         console.error("摄像头初始化失败:", error);
+    //         toggleManualEntry();
+    //     }
+    // }
 
     // 修改扫描初始化代码
     async function initScanner() {
@@ -677,12 +677,12 @@ $dynamicKey = hash('sha256', API_KEY . $_SERVER['REMOTE_ADDR']);
                 await startScanner();
                 initSwitchButton();
             } else {
-                showManualInputOption();
+                toggleManualEntry();
             }
 
         } catch (error) {
             console.error("初始化错误:", error);
-            showManualInputOption();
+            toggleManualEntry();
         }
     }
 
