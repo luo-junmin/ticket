@@ -36,6 +36,10 @@ class ScannerUI {
 
         this.initLanguageSwitcher();
         this.initEventListeners();
+
+        this.switchBtn = document.getElementById('switchCameraBtn');
+        this.initCameraControls();
+
     }
 
     initLanguageSwitcher() {
@@ -94,15 +98,39 @@ class ScannerUI {
         // Prevent default and stop propagation to avoid double triggering
         return false;
     }
-    // toggleManualEntry() {
-    //
-    //     if ( this.manualSection.style.display == 'block') {
-    //         this.manualSection.style.display = 'none';
-    //     } else {
-    //         this.manualSection.style.display = 'block';
-    //         document.getElementById('manualTicketCode').focus();
-    //     }
-    // }
+
+    initCameraControls() {
+        // 初始化摄像头切换按钮
+        this.updateCameraButton();
+
+        // 绑定事件监听器
+        this.switchBtn?.addEventListener('click', async () => {
+            try {
+                this.switchBtn.disabled = true;
+                await this.core.switchCamera();
+                this.updateCameraButton();
+            } catch (error) {
+                console.error('切换摄像头出错:', error);
+            } finally {
+                this.switchBtn.disabled = false;
+            }
+        });
+    }
+
+    updateCameraButton() {
+        if (!this.switchBtn || this.core.availableCameras.length < 2) {
+            this.switchBtn.style.display = 'none';
+            return;
+        }
+
+        const currentCamera = this.core.getCurrentCamera();
+        const isBackCamera = /back|rear|environment/i.test(currentCamera?.label || '');
+
+        this.switchBtn.style.display = 'block';
+        this.switchBtn.textContent = isBackCamera
+            ? '切换到前置摄像头'
+            : '切换到后置摄像头';
+    }
 
     showResult(data) {
         const resultDiv = document.getElementById('result');

@@ -31,6 +31,16 @@ class ScannerCore {
         try {
             const devices = await navigator.mediaDevices.enumerateDevices();
             this.availableCameras = devices.filter(d => d.kind === 'videoinput');
+
+            // 尝试识别后置摄像头
+            const backCameraIndex = this.availableCameras.findIndex(d =>
+                /back|rear|environment/i.test(d.label)
+            );
+
+            if (backCameraIndex !== -1) {
+                this.currentCameraIndex = backCameraIndex;
+            }
+
             return this.availableCameras;
         } catch (error) {
             console.error('获取摄像头失败:', error);
@@ -39,11 +49,31 @@ class ScannerCore {
     }
 
     async startScanning(cameraConfig) {
-        if (this.isScanning) return;
+        // if (this.isScanning) return;
+        if (this.isScanning || this.availableCameras.length === 0) return;
 
-        this.isScanning = true;
+
         try {
             await this.init();
+            this.isScanning = true;
+
+            // const cameraId = this.availableCameras[this.currentCameraIndex].deviceId;
+            //
+            // this.currentStream = await this.html5QrCode.start(
+            //     cameraId,
+            //     {
+            //         fps: 10,
+            //         qrbox: { width: 250, height: 250 }
+            //     },
+            //     (decodedText) => {
+            //         this.handleScanSuccess(decodedText);
+            //     },
+            //     (error) => {
+            //         this.handleScanError(error);
+            //     }
+            // );
+            //
+            // return true;
 
             await this.instance.start(
                 cameraConfig,
@@ -62,19 +92,55 @@ class ScannerCore {
             return true;
         } catch (error) {
             this.isScanning = false;
+            console.error('启动扫描失败:', error);
             throw error;
         }
     }
 
+    // async switchCamera() {
+    //     if (this.availableCameras.length < 2) return;
+    //
+    //     this.currentCameraIndex =
+    //         (this.currentCameraIndex + 1) % this.availableCameras.length;
+    //
+    //     await this.startScanning(
+    //         this.availableCameras[this.currentCameraIndex].deviceId
+    //     );
+    // }
+
     async switchCamera() {
-        if (this.availableCameras.length < 2) return;
+        if (this.availableCameras.length < 2) {
+            console.warn('只有一个摄像头可用，无法切换');
+            return;
+        }
 
-        this.currentCameraIndex =
-            (this.currentCameraIndex + 1) % this.availableCameras.length;
+        this.isScanning = false;
 
-        await this.startScanning(
-            this.availableCameras[this.currentCameraIndex].deviceId
-        );
+        try {
+            // 计算下一个摄像头索引
+            this.currentCameraIndex =
+                (this.currentCameraIndex + 1) % this.availableCameras.length;
+
+            console.log('切换到摄像头:',
+                this.availableCameras[this.currentCameraIndex].label ||
+                `摄像头 ${this.currentCameraIndex + 1}`);
+
+            // 停止当前扫描
+            await this.html5QrCode.stop();
+
+            // 使用新摄像头重新启动
+            await this.startScanning();
+
+            return true;
+        } catch (error) {
+            console.error('切换摄像头失败:', error);
+            throw error;
+        }
+    }
+
+    getCurrentCamera() {
+        if (this.availableCameras.length === 0) return null;
+        return this.availableCameras[this.currentCameraIndex];
     }
 
     async validateTicket(code) {
