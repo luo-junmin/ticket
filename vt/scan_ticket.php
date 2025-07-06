@@ -35,12 +35,12 @@ $clientIp = $_SERVER['HTTP_X_CLIENT_IP'] ??
 
 $receivedKey = $_SERVER['HTTP_X_API_KEY'];
 $clientIp = $_SERVER['HTTP_X_CLIENT_IP'] ?? '';
-trigger_error("receivedKey ".$receivedKey);
-trigger_error("clientIp ".$clientIp);
+//trigger_error("receivedKey ".$receivedKey);
+//trigger_error("clientIp ".$clientIp);
 
 // 验证动态密钥
 $expectedKey = hash('sha256', API_KEY . $clientIp);
-trigger_error("expectedKey ".$expectedKey);
+//trigger_error("expectedKey ".$expectedKey);
 
 if (!hash_equals($expectedKey, $receivedKey)) {
     error_log("API密钥验证失败: 预期[$expectedKey] 实际[$receivedKey] IP[$clientIp]");
@@ -174,13 +174,13 @@ try {
         logValidation($ticketCode, 'valid', $_SERVER['REMOTE_ADDR']);
     }
 } catch (PDOException $e) {
-    error_log('Database error: ' . $e->getMessage());
+//    error_log('Database error: ' . $e->getMessage());
     echo json_encode([
         'status' => 'error',
         'message' => $messages[$lang]['error']
     ]);
 } catch (Exception $e) {
-    error_log('System error: ' . $e->getMessage());
+//    error_log('System error: ' . $e->getMessage());
     echo json_encode([
         'status' => 'error',
         'message' => $messages[$lang]['error']

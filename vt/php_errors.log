@@ -1,3 +1,6 @@
 [05-Jul-2025 22:27:47 Asia/Singapore] PHP Notice:  receivedKey e29f2bc382495bb1b44556610ae678c3e55d1769380406aff09450d03b42e962 in C:\Apache24\htdocs\ticket\vt\scan_ticket.php on line 38
 [05-Jul-2025 22:27:47 Asia/Singapore] PHP Notice:  clientIp ::1 in C:\Apache24\htdocs\ticket\vt\scan_ticket.php on line 39
 [05-Jul-2025 22:27:47 Asia/Singapore] PHP Notice:  expectedKey e29f2bc382495bb1b44556610ae678c3e55d1769380406aff09450d03b42e962 in C:\Apache24\htdocs\ticket\vt\scan_ticket.php on line 43
+[06-Jul-2025 11:10:57 Asia/Singapore] PHP Notice:  receivedKey e29f2bc382495bb1b44556610ae678c3e55d1769380406aff09450d03b42e962 in C:\Apache24\htdocs\ticket\vt\scan_ticket.php on line 38
+[06-Jul-2025 11:10:57 Asia/Singapore] PHP Notice:  clientIp ::1 in C:\Apache24\htdocs\ticket\vt\scan_ticket.php on line 39
+[06-Jul-2025 11:10:57 Asia/Singapore] PHP Notice:  expectedKey e29f2bc382495bb1b44556610ae678c3e55d1769380406aff09450d03b42e962 in C:\Apache24\htdocs\ticket\vt\scan_ticket.php on line 43
