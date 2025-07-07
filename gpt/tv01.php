@@ -85,66 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <button id="toggleManualBtn">↕️ 切换手动输入 / Toggle Manual Entry</button>
 
 <script>
-    // 全局变量保存扫描器实例
-    let qrCodeScanner = null;
-
-    function initScanner() {
-        // 如果已有实例，先停止
-        if (qrCodeScanner && qrCodeScanner.isScanning) {
-            qrCodeScanner.stop().catch(e => console.log("停止扫描器失败:", e));
-        }
-
-        // 创建新实例
-        qrCodeScanner = new Html5Qrcode("reader");
-
-        qrCodeScanner.start(
-            { facingMode: "environment" },
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            },
-            qrCodeMessage => {
-                handleScannedCode(qrCodeMessage);
-            },
-            error => {
-                console.log("扫描错误:", error);
-            }
-        ).catch(err => {
-            console.error("启动扫描器失败:", err);
-            showResult("⚠️ 无法启动摄像头 / Camera Error", "red");
-        });
-    }
-
-    function handleScannedCode(qrCodeMessage) {
-        console.log(qrCodeMessage);
-        validateTicket(qrCodeMessage);
-
-        // 停止扫描器
-        qrCodeScanner.stop().catch(e => console.log("停止扫描器失败:", e));
-
-        // 5秒后重新初始化扫描器而不是重载页面
-        setTimeout(() => {
-            initScanner();
-            showResult("", ""); // 清空结果
-        }, 5000);
-    }
-
-    // 页面加载时初始化
-    document.addEventListener('DOMContentLoaded', function() {
-        initScanner();
-    });
-
-    // 监听页面可见性变化
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden) {
-            // 页面重新可见时重新初始化
-            initScanner();
-        }
-    });
-
-
-    //-----
-
     function showResult(msg, color) {
         const result = document.getElementById("result");
         result.innerHTML = msg;
@@ -204,20 +144,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     }
 
-    // const qrCodeScanner = new Html5Qrcode("reader");
-    // qrCodeScanner.start(
-    //     {facingMode: "environment"},
-    //     {
-    //         fps: 10,
-    //         qrbox: {width: 250, height: 250}
-    //     },
-    //     qrCodeMessage => {
-    //         qrCodeScanner.stop(); // 扫到后暂停
-    //         console.log(qrCodeMessage);
-    //         validateTicket(qrCodeMessage);
-    //         setTimeout(() => location.reload(), 5000); // 4秒后重启
-    //     }
-    // );
+    const qrCodeScanner = new Html5Qrcode("reader");
+    qrCodeScanner.start(
+        {facingMode: "environment"},
+        {
+            fps: 10,
+            qrbox: {width: 250, height: 250}
+        },
+        qrCodeMessage => {
+            qrCodeScanner.stop(); // 扫到后暂停
+            console.log(qrCodeMessage);
+            validateTicket(qrCodeMessage);
+            setTimeout(() => location.reload(), 5000); // 4秒后重启
+        }
+    );
 
     // -----
 
