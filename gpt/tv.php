@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $result = $stmt->get_result();
     $ticket = $result->fetch_assoc();
-    $conn->close();
 
 //    $pdo = new PDO('mysql:host = $db_host; dbname = $db_name; charset=utf8', $db_user, $db_pass);
 //    $stmt = $pdo->prepare("SELECT * FROM tickets WHERE ticket_code = :ticket_code");
@@ -50,12 +49,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($ticket['is_used']) {
         $data = json_encode(['status' => 'used', 'used_at' => $ticket['used_at']]);
     } else {
-        $update = $pdo->prepare("UPDATE tickets SET is_used = 1, used_at = NOW() WHERE ticket_id = ?");
-        $update->execute([$ticket['ticket_id']]);
+        $update = $conn->prepare("UPDATE tickets SET is_used = 1, used_at = NOW() WHERE ticket_id = ?");
+        $update->bind_param("s", $ticket_code);
+        $update->execute();
         $data = json_encode(['status' => 'valid']);
     }
 //    trigger_error($data);
     echo $data;
+    $conn->close();
     exit;
 }
 ?>
