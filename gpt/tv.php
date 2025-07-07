@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_encode(['status' => 'used', 'used_at' => $ticket['used_at']]);
     } else {
         $update = $conn->prepare("UPDATE tickets SET is_used = 1, used_at = NOW() WHERE ticket_id = ?");
-        $update->bind_param("s", $ticket_code);
+        $update->bind_param("i", $ticket['ticket_id']);
         $update->execute();
         $data = json_encode(['status' => 'valid']);
     }
