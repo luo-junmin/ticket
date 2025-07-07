@@ -83,6 +83,7 @@ class ScannerCore {
                 },
                 (decodedText) => {
                     this.handleScanSuccess(decodedText);
+                    this.validateTicket(decodedText);
                 },
                 (error) => {
                     this.handleScanError(error);
@@ -96,17 +97,6 @@ class ScannerCore {
             throw error;
         }
     }
-
-    // async switchCamera() {
-    //     if (this.availableCameras.length < 2) return;
-    //
-    //     this.currentCameraIndex =
-    //         (this.currentCameraIndex + 1) % this.availableCameras.length;
-    //
-    //     await this.startScanning(
-    //         this.availableCameras[this.currentCameraIndex].deviceId
-    //     );
-    // }
 
     async switchCamera() {
         if (this.availableCameras.length < 2) {

@@ -35,11 +35,11 @@ class ScannerUI {
         this.initManualToggle();
 
         this.initLanguageSwitcher();
-        this.initEventListeners();
 
         this.switchBtn = document.getElementById('switchCameraBtn');
         this.initCameraControls();
 
+        this.initEventListeners();
     }
 
     initLanguageSwitcher() {
