@@ -9,7 +9,6 @@ $lang = $language;
 //print_r($_SESSION);
 $pageTitle = $language->get('home');
 
-
 $db = new Database();
 $event = new Event();
 $events = $event->getActiveEvents();

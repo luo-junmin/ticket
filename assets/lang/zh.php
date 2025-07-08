@@ -189,7 +189,8 @@ return [
     'ticket_count' => 'Tickets: ',
     'ticket_attachment' => 'You can also find your ticket attached to this email.',
     'your_ticket_qr_code' => 'Below is your ticket QR code for easy access:',
-    'contact_support' => 'Contact Support'
+    'contact_support' => 'Contact Support',
+    'inspect' => '验票',
 
 
 ];

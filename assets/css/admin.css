@@ -39,3 +39,7 @@ main {
         padding-top: 0;
     }
 }
+
+.inline-form {
+    display: inline;
+}

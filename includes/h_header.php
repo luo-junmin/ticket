@@ -24,7 +24,7 @@ if (isset($_GET['lang'])) {
         exit;
     }
 }
-
+//trigger_error(print_r($_SESSION, true));
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang->getCurrentLanguage() ?>">
@@ -309,6 +309,12 @@ if (isset($_GET['lang'])) {
                         <li class="nav-item">
                             <a class="nav-link <?= strpos($currentPage, 'admin') !== false ? 'active' : '' ?>"
                                href="/ticket/admin/login.php"><?= $lang->get('admin') ?></a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'inspector')): ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?= strpos($currentPage, 'inspect') !== false ? 'active' : '' ?>"
+                               href="/ticket/gpt/tv.php"><?= $lang->get('inspect') ?></a>
                         </li>
                     <?php endif; ?>
                 </ul>

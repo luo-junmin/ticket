@@ -1,0 +1,5 @@
+本地服务器的bootstrap.bundle.min.js不工作，需要应用外部文件。
+
+<!--<script src="/ticket/assets/js/bootstrap.bundle.min.js"></script>-->
+<!-- 确保加载了Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

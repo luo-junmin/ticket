@@ -25,6 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
         case 'remove_admin':
             $user->updateUserRole($userId, 'user');
             break;
+        case 'make_inspector':
+            $user->updateUserRole($userId, 'inspector');
+            break;
+        case 'remove_inspector':
+            $user->updateUserRole($userId, 'user');
+            break;
     }
 
     header("Location: ".$_SERVER['PHP_SELF']);
@@ -94,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
+<!--                                            <form method="POST" class="inline-form">-->
                                             <form method="POST" style="display:inline;">
                                                 <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
                                                 <?php if ($user['is_active']): ?>
@@ -104,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
                                             </form>
                                         </li>
                                         <li>
+<!--                                            <form method="POST" class="inline-form">-->
                                             <form method="POST" style="display:inline;">
                                                 <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
                                                 <?php if ($user['role'] === 'admin'): ?>
@@ -113,9 +121,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
                                                 <?php endif; ?>
                                             </form>
                                         </li>
+                                        <li>
+                                            <form method="POST" style="display:inline;">
+                                                <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
+                                                <?php if ($user['role'] === 'inspector'): ?>
+                                                    <button type="submit" name="action" value="remove_inspector" class="dropdown-item">Remove Inspector</button>
+                                                <?php else: ?>
+                                                    <button type="submit" name="action" value="make_inspector" class="dropdown-item">Make Inspector</button>
+                                                <?php endif; ?>
+                                            </form>
+                                        </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?')">
+<!--                                            <form method="POST" class="inline-form" onsubmit="return confirm('Are you sure you want to delete this user?')">-->
+                                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?')">
                                                 <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
                                                 <button type="submit" name="action" value="delete" class="dropdown-item text-danger">Delete</button>
                                             </form>

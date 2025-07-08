@@ -4,9 +4,12 @@
  *  Real-time QR Ticket Validation
  *
  */
+include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
+
+require_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/middleware/InspectorAuthMiddleware.php';
+(new InspectorAuthMiddleware())->handle();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
 
 // 数据库配置
     $db_host = DB_HOST;
@@ -83,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- 控制按钮 -->
 <button id="toggleManualBtn">↕️ 切换手动输入 / Toggle Manual Entry</button>
+<p><a href="/ticket/">Home</a></p>
 
 <script>
     // 全局变量保存扫描器实例
@@ -203,21 +207,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             showResult("⚠️ 系统错误，请重试 / System Error", "red");
         });
     }
-
-    // const qrCodeScanner = new Html5Qrcode("reader");
-    // qrCodeScanner.start(
-    //     {facingMode: "environment"},
-    //     {
-    //         fps: 10,
-    //         qrbox: {width: 250, height: 250}
-    //     },
-    //     qrCodeMessage => {
-    //         qrCodeScanner.stop(); // 扫到后暂停
-    //         console.log(qrCodeMessage);
-    //         validateTicket(qrCodeMessage);
-    //         setTimeout(() => location.reload(), 5000); // 4秒后重启
-    //     }
-    // );
 
     // -----
 
