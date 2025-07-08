@@ -63,7 +63,7 @@ if (isset($_GET['print'])) {
                         </div>
 
                         <div class="ticket-qr">
-                            <img src="<?= $t['qr_code_path'] ?>" alt="QR Code">
+                            <img src="<?= SITE_URL.PUBLIC_PATH.$t['qr_code_path'] ?>" alt="QR Code">
                         </div>
                     </div>
                 </div>

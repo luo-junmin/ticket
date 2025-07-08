@@ -172,6 +172,28 @@ class User {
         return ['success' => true];
     }
 
+    // classes/User.php 中应包含的方法
+    public function createUser($data) {
+        // 密码哈希处理
+//        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+//
+//        $data = array(
+//            ':name' => $data['name'],
+//            ':email' => $data['email'],
+//            ':password' => $hashedPassword,
+//            ':role' => $data['role'],
+//            ':phone' => $data['phone']
+//        );
+//
+//        $sql = "INSERT INTO users (name, email, password, role, phone, created_at)
+//            VALUES (:name, :email, :password, :role, :phone, NOW())";
+//
+//        $stmt = $this->pdo->prepare($sql);
+//        return $stmt->execute($data);
+
+        return $this->register($data['email'], $data['password'], $data['name'], $data['phone']);
+    }
+
     public function getUserOrders($userId) {
         $stmt = $this->pdo->prepare("
         SELECT o.*, e.title, e.event_date
@@ -351,11 +373,18 @@ class User {
     }
 
     public function emailExists($email) {
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
-        $stmt->execute([$email]);
-        trigger_error(print_r($stmt,true));
-        trigger_error($stmt->fetchColumn() );
+//        $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
+//        $stmt->execute([$email]);
+//        trigger_error(print_r($stmt,true));
+//        trigger_error($stmt->fetchColumn() );
+//        return $stmt->fetchColumn() > 0;
+
+        $sql = "SELECT COUNT(*) as count FROM users WHERE email = :email";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
         return $stmt->fetchColumn() > 0;
+
     }
 
     public function verifyEmail($userId, $token) {

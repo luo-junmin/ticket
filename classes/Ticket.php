@@ -22,11 +22,16 @@ class Ticket {
     public function getUserOrders($userId)
     {
         // Get order details
-        $stmt = $this->pdo->prepare("
-            SELECT * 
-            FROM orders 
-            WHERE user_id = ?
-        ");
+        $sql = "SELECT o.order_id, o.created_at, o.payment_status, e.event_date, o.total_amount, e.title 
+                FROM orders o 
+                JOIN events e ON e.event_id = o.event_id 
+                WHERE user_id = ?;";
+        $stmt = $this->pdo->prepare($sql);
+//        $stmt = $this->pdo->prepare("
+//            SELECT *
+//            FROM orders
+//            WHERE user_id = ?
+//        ");
         $stmt->execute([$userId]);
         $orderDetails = $stmt->fetchAll();
 

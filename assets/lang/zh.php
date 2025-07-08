@@ -190,6 +190,7 @@ return [
     'ticket_attachment' => 'You can also find your ticket attached to this email.',
     'your_ticket_qr_code' => 'Below is your ticket QR code for easy access:',
     'contact_support' => 'Contact Support',
+    'all_rights_reserved' => '版权所有',
     'inspect' => '验票',
 
 

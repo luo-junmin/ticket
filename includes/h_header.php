@@ -6,8 +6,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
 $lang = Language::getInstance();
 $currentPage = basename($_SERVER['PHP_SELF']);
 // 检查变量是否存在再使用
-$userRole = $_SESSION['user_role'] ?? 'guest';
-$userEmail = $_SESSION['user_email'] ?? '';
+//$userRole = $_SESSION['user_role'] ?? 'guest';
+//$userEmail = $_SESSION['user_email'] ?? '';
 
 // 处理语言切换
 if (isset($_GET['lang'])) {

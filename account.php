@@ -1,9 +1,5 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
-//include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/classes/Database.php';
-//include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/classes/User.php';
-//include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/classes/Ticket.php';
-//include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/classes/Language.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/includes/autoload.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/api/auth.php'; // 确保用户已登录
 
@@ -134,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     </style>
 </head>
 <body>
-<?php //require_once 'includes/navbar.php'; ?>
 
 <div class="container">
     <h1 class="my-4"><?= $lang->get('my_account') ?></h1>
@@ -229,7 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                                         </a>
                                     </h5>
                                     <p class="text-muted mb-1">
-                                        <?= date('Y-m-d H:i', strtotime($order['order_date'])) ?>
+                                        <?= date('Y-m-d H:i', strtotime($order['created_at'])) ?>
                                     </p>
                                 </div>
                                 <div>
@@ -255,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                             </div>
 
                             <div class="mt-3">
-                                <a href="/ticket.php?order_id=<?= $order['order_id'] ?>" class="btn btn-sm btn-outline-primary">
+                                <a href="/ticket/ticket.php?order_id=<?= $order['order_id'] ?>" class="btn btn-sm btn-outline-primary">
                                     <?= $lang->get('view_tickets') ?>
                                 </a>
                             </div>
