@@ -49,7 +49,7 @@ return [
     'ticket_already_used' => '票据已被使用',
     'ticket_valid' => '票据有效',
     'search_events' => '搜索活动...',
-    'footer_description' => '正在测试',
+    'footer_description' => '您购买活动门票的首选目的地',
     'about' => '关于我们',
     'contact' => '联系',
     'terms' => '条款',
@@ -183,15 +183,17 @@ return [
     'total' => '总计',
     'currency_symbol' => '¥',
 
-    'thank_you' => 'Thank you for your purchase!',
-    'order_confirmed' => 'Order Confirmed',
-    'location'  => 'Location: ',
-    'ticket_count' => 'Tickets: ',
-    'ticket_attachment' => 'You can also find your ticket attached to this email.',
-    'your_ticket_qr_code' => 'Below is your ticket QR code for easy access:',
-    'contact_support' => 'Contact Support',
-    'all_rights_reserved' => '版权所有',
+    'thank_you' => '感谢您的购买！',
+    'order_confirmed' => '订单已确认',
+    'location'  => '地点：',
+    'ticket_count' => '票数：',
+    'ticket_attachment' => '您也可以在邮件附件中找到您的票。',
+    'your_ticket_qr_code' => '以下是您的票务二维码，方便您使用：',
+    'contact_support' => '联系客服',
+    'all_rights_reserved' => 'All rights reserved', // 注意：这个保留原文更常见
     'inspect' => '验票',
-
+    'view_tickets' => '查看票务',
+    'ticket' => '票',
+    'print_tickets' => '打印票据'
 
 ];

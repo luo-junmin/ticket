@@ -170,6 +170,8 @@ return [
     'total' => 'Total',
     'currency_symbol' => '$',
 
+
+    'footer_description' => 'Your premier destination for event tickets and experiences. <br>Find the best events in your city.',
     'thank_you' => 'Thank you for your purchase!',
     'order_confirmed' => 'Order Confirmed',
     'location'  => 'Location: ',
@@ -179,5 +181,7 @@ return [
     'contact_support' => 'Contact Support',
     'all_rights_reserved' => 'All Rights Reserved.',
     'inspect' => 'Inspection',
-
+    'view_tickets' => 'View Tickets',
+    'ticket' => 'Ticket',
+    'print_tickets' => 'Print Ticket',
 ];

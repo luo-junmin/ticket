@@ -301,10 +301,12 @@ if (isset($_GET['lang'])) {
                         <a class="nav-link <?= $currentPage === 'events.php' ? 'active' : '' ?>"
                            href="/ticket/events.php"><?= $lang->get('events') ?></a>
                     </li>
+                    <?php if (isset($_SESSION['user_id'])): ?>
                     <li class="nav-item">
                         <a class="nav-link <?= strpos($currentPage, 'account') !== false ? 'active' : '' ?>"
                            href="/ticket/account.php"><?= $lang->get('my_account') ?></a>
                     </li>
+                    <?php endif; ?>
                     <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] === 'admin'): ?>
                         <li class="nav-item">
                             <a class="nav-link <?= strpos($currentPage, 'admin') !== false ? 'active' : '' ?>"

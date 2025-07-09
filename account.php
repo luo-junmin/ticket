@@ -1,7 +1,7 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/config/config.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/includes/autoload.php';
-include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/api/auth.php'; // 确保用户已登录
+//include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/api/auth.php'; // 确保用户已登录
 
 $user = new User();
 $currentUser = $user->getUserById($_SESSION['user_id']);
