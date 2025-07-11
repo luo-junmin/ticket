@@ -3,39 +3,24 @@ include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_auth.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/classes/Event.php';
 $event = new Event();
 $events = $event->getAllEvents();
-//$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-$_SESSION['csrf_token'] = generateCsrfToken();
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
 // 处理批量操作
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // 处理批量操作
-    if (isset($_POST['bulk_action'])) {
-        $action = $_POST['bulk_action'];
-        $selected = $_POST['selected_events'] ?? [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action'])) {
+    $action = $_POST['bulk_action'];
+    $selected = $_POST['selected_events'] ?? [];
 
-        if (!empty($selected)) {
-            switch ($action) {
-                case 'activate':
-                    $event->bulkUpdateStatus($selected, 1);
-                    break;
-                case 'deactivate':
-                    $event->bulkUpdateStatus($selected, 0);
-                    break;
-                case 'delete':
-                    $event->bulkDelete($selected);
-                    break;
-            }
-        }
-    }
-    // 处理单个删除操作
-    elseif (isset($_POST['delete_event'])) {
-        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-            die('Invalid CSRF token');
-        }
-
-        $event_id = (int)$_POST['event_id'];
-        if ($event_id > 0) {
-            $event->deleteEvent($event_id);
+    if (!empty($selected)) {
+        switch ($action) {
+            case 'activate':
+                $event->bulkUpdateStatus($selected, 1);
+                break;
+            case 'deactivate':
+                $event->bulkUpdateStatus($selected, 0);
+                break;
+            case 'delete':
+                $event->bulkDelete($selected);
+                break;
         }
     }
 
@@ -107,17 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <td><?= date('Y-m-d H:i', strtotime($event['event_date'])) ?></td>
                                 <td><?= htmlspecialchars($event['location']) ?></td>
                                 <td>
-                                    <span class="badge bg-<?= $event['is_active'] ? 'success' : 'secondary' ?>">
-                                        <?= $event['is_active'] ? 'Active' : 'Inactive' ?>
-                                    </span>
+                                        <span class="badge bg-<?= $event['is_active'] ? 'success' : 'secondary' ?>">
+                                            <?= $event['is_active'] ? 'Active' : 'Inactive' ?>
+                                        </span>
                                 </td>
                                 <td>
                                     <a href="edit.php?id=<?= $event['event_id'] ?>" class="btn btn-sm btn-outline-primary">Edit</a>
-                                    <form method="POST" action="" style="display:inline;">
-                                        <input type="hidden" name="event_id" value="<?= $event['event_id'] ?>">
-                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                        <button type="submit" name="delete_event" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this event?')">Delete</button>
-                                    </form>
+                                    <a href="delete.php?id=<?= $event['event_id'] ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

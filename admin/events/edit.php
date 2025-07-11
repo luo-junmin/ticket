@@ -1,10 +1,13 @@
 <?php
+header("Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data:");
+
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_auth.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/classes/Event.php';
 
 $event = new Event();
 $eventId = $_GET['id'] ?? 0;
 $eventData = $eventId ? $event->getEventById($eventId) : null;
+//trigger_error(print_r($eventData, true));
 
 // 处理表单提交
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -16,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'venue' => $_POST['venue'],
         'min_price' => $_POST['min_price'],
         'max_price' => $_POST['max_price'],
+        'image_url' => $_POST['image_url'],
         'is_active' => isset($_POST['is_active']) ? 1 : 0
     ];
 
@@ -26,8 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['image_url'] = $upload['path'];
             // 删除旧图片
             if ($eventData && $eventData['image_url']) {
-                @unlink(__DIR__ . '/../../' . $eventData['image_url']);
+                @unlink($_SERVER['DOCUMENT_ROOT'] . $eventData['image_url']);
             }
+        } else {
+            error_log("上传失败：" . $upload['message']);
         }
     }
 
@@ -47,28 +53,188 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-function uploadImage($file) {
+function uploadImage($file)
+{
     $allowed = ['jpg', 'jpeg', 'png', 'gif'];
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $maxSize = 2 * 1024 * 1024; // 2MB
+    $maxWidth = 1024;
 
     if (!in_array($ext, $allowed)) {
         return ['success' => false, 'message' => 'Invalid file type'];
     }
 
-    if ($file['size'] > 2 * 1024 * 1024) { // 2MB
-        return ['success' => false, 'message' => 'File too large'];
-    }
-
-    $uploadDir = '/assets/images/events/';
+    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . UPLOADS_PATH . '/images/events/';
+    $webBase = UPLOADS_PATH . '/images/events/';
     $filename = uniqid() . '.' . $ext;
-    $destination = __DIR__ . '/../../' . $uploadDir . $filename;
+    $destination = $uploadDir . $filename;
+    $webPath = $webBase . $filename;
 
-    if (!move_uploaded_file($file['tmp_name'], $destination)) {
-        return ['success' => false, 'message' => 'Upload failed'];
+    $targetDir = rtrim($uploadDir, '/\\');
+    $targetPath = $targetDir . '/' . $filename;
+
+//    trigger_error($destination);
+//    trigger_error(print_r($file, true));
+
+    // 创建目录
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0755, true);
     }
 
-    return ['success' => true, 'path' => $uploadDir . $filename];
+    // 如果文件大小 ≤ 2MB，直接保存
+    if ($file['size'] <= $maxSize) {
+        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+            return ['success' => false, 'message' => '保存文件失败'];
+        }
+        return ['success' => true, 'path' => $webPath];
+    }
+
+    if ($file['size'] > 2 * 1024 * 1024) { // 2MB
+//        trigger_error("File exceed 2M");
+        // 超过2MB，尝试压缩
+        list($origWidth, $origHeight) = getimagesize($file['tmp_name']);
+        $newWidth = $origWidth > $maxWidth ? $maxWidth : $origWidth;
+        $newHeight = intval($origHeight * ($newWidth / $origWidth));
+
+        switch ($file['type']) {
+            case 'image/jpeg':
+                $srcImage = imagecreatefromjpeg($file['tmp_name']);
+                break;
+            case 'image/png':
+                $srcImage = imagecreatefrompng($file['tmp_name']);
+                break;
+            case 'image/webp':
+                $srcImage = imagecreatefromwebp($file['tmp_name']);
+                break;
+            default:
+                return ['success' => false, 'message' => '无法识别图片格式'];
+        }
+
+        if (!$srcImage) {
+            return ['success' => false, 'message' => '无法读取图像'];
+        }
+
+        // 创建缩小版本
+        $dstImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        // 保持透明度（仅 png/webp）
+        if (in_array($file['type'], ['image/png', 'image/webp'])) {
+            imagealphablending($dstImage, false);
+            imagesavealpha($dstImage, true);
+        }
+
+        imagecopyresampled($dstImage, $srcImage, 0, 0, 0, 0,
+            $newWidth, $newHeight, $origWidth, $origHeight);
+
+        // 保存压缩文件
+        $saved = false;
+        switch ($file['type']) {
+            case 'image/jpeg':
+                $saved = imagejpeg($dstImage, $targetPath, 85);
+                break;
+            case 'image/png':
+                $saved = imagepng($dstImage, $targetPath, 6); // 0-9
+                break;
+            case 'image/webp':
+                $saved = imagewebp($dstImage, $targetPath, 85);
+                break;
+        }
+
+        imagedestroy($srcImage);
+        imagedestroy($dstImage);
+
+        if (!$saved) {
+            return ['success' => false, 'message' => '压缩保存失败'];
+        }
+
+        return ['success' => true, 'path' => $webPath];
+    }
 }
+
+//function uploadImage($fileInputName, $subDir = 'events') {
+//    error_log(print_r($_FILES, true));
+//    $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+//    $maxSize = 2 * 1024 * 1024; // 2MB
+//    $uploadBase = $_SERVER['DOCUMENT_ROOT'] . '/ticket/assets/images/' . $subDir;
+//    $webBase = '/assets/images/' . $subDir;
+//
+//    error_log($uploadBase);
+//    if (!isset($_FILES[$fileInputName]) || $_FILES[$fileInputName]['error'] !== UPLOAD_ERR_OK) {
+//        error_log("Failed to upload image.");
+//        return ['success' => false, 'message' => '上传失败或无文件'];
+//    }
+//
+//    $file = $_FILES[$fileInputName];
+//    error_log($file);
+//
+//    // 类型限制
+//    if (!in_array($file['type'], $allowedTypes)) {
+//        return ['success' => false, 'message' => '文件类型不支持'];
+//    }
+//
+//    // 生成唯一文件名
+//    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+//    $filename = uniqid() . '.' . $ext;
+//    $targetDir = rtrim($uploadBase, '/\\');
+//    $targetPath = $targetDir . '/' . $filename;
+//    $webPath = $webBase . '/' . $filename;
+//
+//    // 创建目录
+//    if (!is_dir($targetDir)) {
+//        mkdir($targetDir, 0755, true);
+//    }
+//
+//    // 如果文件大小 ≤ 2MB，直接保存
+//    if ($file['size'] <= $maxSize) {
+//        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+//            return ['success' => false, 'message' => '保存文件失败'];
+//        }
+//        return ['success' => true, 'path' => $webPath];
+//    }
+//
+//    // 否则尝试压缩
+//    $image = null;
+//    switch ($file['type']) {
+//        case 'image/jpeg':
+//            $image = imagecreatefromjpeg($file['tmp_name']);
+//            break;
+//        case 'image/png':
+//            $image = imagecreatefrompng($file['tmp_name']);
+//            break;
+//        case 'image/webp':
+//            $image = imagecreatefromwebp($file['tmp_name']);
+//            break;
+//    }
+//
+//    if (!$image) {
+//        return ['success' => false, 'message' => '读取图片失败'];
+//    }
+//
+//    // 压缩（逐步降低质量）
+//    $quality = 90;
+//    do {
+//        ob_start();
+//        if ($file['type'] === 'image/png') {
+//            // PNG 的压缩级别是 0-9，9 最压缩
+//            imagepng($image, null, round((9 * (100 - $quality)) / 100));
+//        } elseif ($file['type'] === 'image/webp') {
+//            imagewebp($image, null, $quality);
+//        } else {
+//            imagejpeg($image, null, $quality);
+//        }
+//        $compressed = ob_get_clean();
+//        $size = strlen($compressed);
+//        $quality -= 5;
+//    } while ($size > $maxSize && $quality > 10);
+//
+//    // 保存压缩文件
+//    if (file_put_contents($targetPath, $compressed) === false) {
+//        return ['success' => false, 'message' => '保存压缩文件失败'];
+//    }
+//
+//    return ['success' => true, 'path' => $webPath];
+//}
+
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +244,7 @@ function uploadImage($file) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $eventId ? 'Edit' : 'Add' ?> Event | <?= SITE_NAME ?></title>
     <?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php'; ?>
-    <link href=/ticket/assets/css/flatpickr.min.css" rel="stylesheet">
+    <link href="/ticket/assets/css/flatpickr.min.css" rel="stylesheet">
 </head>
 <body>
 <?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_navbar.php'; ?>
@@ -169,6 +335,7 @@ function uploadImage($file) {
                                     <input type="file" class="form-control" id="image" name="image" accept="image/*">
 
                                     <?php if (isset($eventData['image_url']) && $eventData['image_url']): ?>
+                                    <input type="hidden" name="image_url" value="<?= $eventData['image_url'] ?>">
                                         <div class="mt-2">
                                             <img src="<?= $eventData['image_url'] ?>" class="img-thumbnail" style="max-height: 150px;">
                                             <div class="form-check mt-2">

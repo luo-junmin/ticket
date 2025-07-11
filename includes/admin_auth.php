@@ -1,8 +1,6 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/config/config.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/classes/User.php';
-//require_once __DIR__ . '/../config.php';
-//require_once __DIR__ . '/../classes/User.php';
 
 /**
  * 后台管理员认证中间件
@@ -47,7 +45,7 @@ if ($user['role'] !== ADMIN_ROLE) {
 }
 
 // 检查最后活动时间（可选的安全增强）
-$inactive = 3600; // 30分钟无操作超时
+$inactive = 36000; // 30分钟无操作超时
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $inactive)) {
     session_unset();
     session_destroy();
@@ -85,6 +83,23 @@ function generateCsrfToken() {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
     return $_SESSION['csrf_token'];
+}
+
+//-----
+/**
+ * 检查当前用户是否是管理员
+ */
+function is_admin() {
+    // 检查用户是否已登录且具有管理员权限
+    // 根据你的用户系统调整这部分逻辑
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+}
+
+/**
+ * 验证CSRF令牌
+ */
+function validate_csrf_token($token) {
+    return isset($_SESSION['csrf_token']) && $_SESSION['csrf_token'] === $token;
 }
 
 // 安全头设置

@@ -12,8 +12,8 @@ class Event {
     public function getActiveEvents() {
         $stmt = $this->pdo->query("
             SELECT e.*, 
-                   MIN(z.base_price) as min_price, 
-                   MAX(z.base_price) as max_price
+                   MIN(z.base_price) as minprice, 
+                   MAX(z.base_price) as maxprice
             FROM events e
             LEFT JOIN ticket_zones z ON e.event_id = z.event_id
             WHERE e.is_active = TRUE AND e.event_date >= NOW()
@@ -26,8 +26,8 @@ class Event {
     public function getEventById($eventId) {
         $stmt = $this->pdo->prepare("
             SELECT e.*, 
-                   MIN(z.base_price) as min_price, 
-                   MAX(z.base_price) as max_price
+                   MIN(z.base_price) as minprice, 
+                   MAX(z.base_price) as maxprice
             FROM events e
             LEFT JOIN ticket_zones z ON e.event_id = z.event_id
             WHERE e.event_id = ?
@@ -239,8 +239,8 @@ class Event {
     public function addEvent($data) {
         try {
             $stmt = $this->pdo->prepare("
-            INSERT INTO events (title, description, event_date, location, venue, image_url, is_active)
-            VALUES (:title, :description, :event_date, :location, :venue, :image_url, :is_active)
+            INSERT INTO events (title, description, event_date, location, venue, min_price, max_price, image_url, is_active)
+            VALUES (:title, :description, :event_date, :location, :venue, :min_price, :max_price, :image_url, :is_active)
         ");
 
             $stmt->execute([
@@ -249,6 +249,8 @@ class Event {
                 ':event_date' => $data['event_date'],
                 ':location' => $data['location'],
                 ':venue' => $data['venue'],
+                ':min_price' => $data['min_price'],
+                ':max_price' => $data['max_price'],
                 ':image_url' => $data['image_url'] ?? null,
                 ':is_active' => $data['is_active']
             ]);
@@ -260,12 +262,21 @@ class Event {
     }
 
     public function updateEvent($eventId, $data) {
+//        trigger_error(print_r($data,true));
         try {
             $stmt = $this->pdo->prepare("
-            UPDATE events (title, description, event_date, location, venue, min_price, max_price, image_url, is_active)
-            VALUES (:title, :description, :event_date, :location, :venue, :min_price, :max_price, :image_url, :is_active)
-            WHERE event_id = :event_id
-        ");
+            UPDATE events SET
+            title = :title,
+            description = :description,
+            event_date = :event_date,
+            location = :location,
+            venue = :venue,
+            min_price = :min_price,
+            max_price = :max_price,
+            image_url = :image_url,
+            is_active = :is_active
+        WHERE event_id = :event_id
+    ");
 
             $stmt->execute([
                 ':title' => $data['title'],
@@ -279,7 +290,6 @@ class Event {
                 ':is_active' => $data['is_active'],
                 ':event_id' => $eventId
             ]);
-
             return ['success' => true];
         } catch (PDOException $e) {
             return ['success' => false, 'message' => '数据库错误: ' . $e->getMessage()];
@@ -303,5 +313,44 @@ class Event {
         ");
         $stmt->execute([$zoneId]);
         return $stmt->fetchAll();
+    }
+
+    public function deleteEvent($event_id) {
+        try {
+            // 获取PDO连接
+//            $pdo = $this->getPDO();
+
+            // 开启事务
+            $this->pdo->beginTransaction();
+
+            // 1. 获取事件图片路径（如果有）
+            $stmt = $this->pdo->prepare("SELECT image_url FROM events WHERE event_id = ?");
+            $stmt->execute([$event_id]);
+            $event = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // 2. 删除数据库记录
+            $stmt = $this->pdo->prepare("DELETE FROM events WHERE event_id = ?");
+            $stmt->execute([$event_id]);
+
+            // 3. 删除关联图片（如果有）
+            if (!empty($event['image_url'])) {
+                $image_path = $_SERVER['DOCUMENT_ROOT'] . '/ticket/uploads/' . basename($event['image_url']);
+                if (file_exists($image_path)) {
+                    unlink($image_path);
+                }
+            }
+
+            // 提交事务
+            $this->pdo->commit();
+
+            return true;
+        } catch (PDOException $e) {
+            // 回滚事务
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("Event deletion failed: " . $e->getMessage());
+            return false;
+        }
     }
 }
