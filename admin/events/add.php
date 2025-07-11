@@ -1,6 +1,7 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_auth.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/classes/Event.php';
+include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/file_utils.php';
 
 $event = new Event();
 $error = '';
@@ -50,38 +51,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 /**
  * 图片上传处理
  */
-function uploadImage($file) {
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    $maxSize = 2 * 1024 * 1024; // 2MB
+//function uploadImage($file) {
+//    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+//    $maxSize = 2 * 1024 * 1024; // 2MB
+//
+//    // 验证文件类型
+//    if (!in_array($file['type'], $allowedTypes)) {
+//        return ['success' => false, 'message' => '只允许上传JPEG, PNG或GIF图片'];
+//    }
+//
+//    // 验证文件大小
+//    if ($file['size'] > $maxSize) {
+//        return ['success' => false, 'message' => '图片大小不能超过2MB'];
+//    }
+//
+//    // 生成唯一文件名
+//    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+//    $filename = uniqid() . '.' . $ext;
+//    $uploadDir = '/assets/images/events/';
+//    $uploadPath = __DIR__ . '/../../..' . $uploadDir;
+//
+//    // 确保目录存在
+//    if (!file_exists($uploadPath)) {
+//        mkdir($uploadPath, 0755, true);
+//    }
+//
+//    // 移动上传文件
+//    if (move_uploaded_file($file['tmp_name'], $uploadPath . $filename)) {
+//        return ['success' => true, 'path' => $uploadDir . $filename];
+//    } else {
+//        return ['success' => false, 'message' => '文件上传失败'];
+//    }
+//}
 
-    // 验证文件类型
-    if (!in_array($file['type'], $allowedTypes)) {
-        return ['success' => false, 'message' => '只允许上传JPEG, PNG或GIF图片'];
-    }
-
-    // 验证文件大小
-    if ($file['size'] > $maxSize) {
-        return ['success' => false, 'message' => '图片大小不能超过2MB'];
-    }
-
-    // 生成唯一文件名
-    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $filename = uniqid() . '.' . $ext;
-    $uploadDir = '/assets/images/events/';
-    $uploadPath = __DIR__ . '/../../..' . $uploadDir;
-
-    // 确保目录存在
-    if (!file_exists($uploadPath)) {
-        mkdir($uploadPath, 0755, true);
-    }
-
-    // 移动上传文件
-    if (move_uploaded_file($file['tmp_name'], $uploadPath . $filename)) {
-        return ['success' => true, 'path' => $uploadDir . $filename];
-    } else {
-        return ['success' => false, 'message' => '文件上传失败'];
-    }
-}
 ?>
 
 <!DOCTYPE html>
