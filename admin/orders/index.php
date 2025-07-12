@@ -2,6 +2,21 @@
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_auth.php';
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/classes/Order.php';
 
+// 安全的日期格式化函数
+function formatDate($dateString) {
+    if (empty($dateString)) {
+        return 'No date set';
+    }
+
+    try {
+        $date = new DateTime($dateString);
+        return $date->format('Y-m-d H:i');
+    } catch (Exception $e) {
+        error_log("Wrong date format: " . $e->getMessage());
+        return 'Invalid Date';
+    }
+}
+
 $order = new Order();
 $orders = $order->getAllOrders();
 
@@ -12,6 +27,7 @@ if ($statusFilter) {
         return $order['payment_status'] === $statusFilter;
     });
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +65,8 @@ if ($statusFilter) {
                         <th>Event</th>
                         <th>Customer</th>
                         <th>Amount</th>
-                        <th>Date</th>
+                        <th>Order Date</th>
+                        <th>Paid Date</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -61,7 +78,10 @@ if ($statusFilter) {
                             <td><?= htmlspecialchars($order['title']) ?></td>
                             <td><?= htmlspecialchars($order['customer_email']) ?></td>
                             <td>SGD <?= number_format($order['total_amount'], 2) ?></td>
-                            <td><?= date('Y-m-d H:i', strtotime($order['payment_date'])) ?></td>
+                            <td><?= date('Y-m-d H:i', strtotime($order['created_at'])) ?></td>
+<!--                            <td>--><?php //= date('Y-m-d H:i', strtotime($order['payment_date'])) ?><!--</td>-->
+                            <td><?= formatDate($order['payment_date']) ?></td>
+
                             <td>
                                     <span class="badge bg-<?= $order['status'] === 'completed' ? 'success' : 'warning' ?>">
                                         <?= ucfirst($order['status']) ?>

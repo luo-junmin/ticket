@@ -118,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                         <button type="submit" name="delete_event" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this event?')">Delete</button>
                                     </form>
+                                    <a href="zones.php?event_id=<?= $event['event_id'] ?>" class="btn btn-sm btn-outline-info">管理区域</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -14,6 +14,14 @@
                     Events
                 </a>
             </li>
+            <!-- 添加Zone管理入口 -->
+            <li class="nav-item">
+                <a class="nav-link" href="/ticket/admin/events/zones.php">
+                    <i class="bi bi-grid me-2"></i>
+                    Zone
+                </a>
+            </li>
+
             <li class="nav-item">
                 <a class="nav-link <?= strpos($_SERVER['REQUEST_URI'], '/admin/orders/') !== false ? 'active' : '' ?>" href="/ticket/admin/orders">
                     <i class="bi bi-receipt me-2"></i>

@@ -1,4 +1,5 @@
 <?php
+// /ticket/includes/admin_header.php
 // 在admin_header.php中添加
 //header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline';");
 
