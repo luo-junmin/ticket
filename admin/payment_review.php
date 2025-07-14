@@ -36,9 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Send confirmation email
             $userEmail = $payment->getUserEmailFromReceipt($receiptId);
             $ticket->sendConfirmationEmail($orderId, $userEmail);
-            trigger_error(print_r($userEmail, true));
-
-
             $success = $language->get('payment_approved_success');
         } else {
             $error = $language->get('payment_approval_failed');

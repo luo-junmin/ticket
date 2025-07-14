@@ -4,8 +4,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/classes/User.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/includes/autoload.php';
 include_once $_SERVER['DOCUMENT_ROOT'] . '/ticket/includes/csrf.php';
 
-error_log("CSRF Token Received: " . ($_POST['csrf_token'] ?? 'NULL'));
-error_log("Session CSRF Token: " . ($_SESSION['csrf_token'] ?? 'NULL'));
+//error_log("CSRF Token Received: " . ($_POST['csrf_token'] ?? 'NULL'));
+//error_log("Session CSRF Token: " . ($_SESSION['csrf_token'] ?? 'NULL'));
 
 // 确保session已启动
 if (session_status() === PHP_SESSION_NONE) {
@@ -27,7 +27,7 @@ switch ($action) {
         $remember = isset($_POST['remember']);
         $result = $user->login($email, $password);
         // 调试输出（正式环境应移除）
-        error_log("Session after login: " . print_r($_SESSION, true));
+//        error_log("Session after login: " . print_r($_SESSION, true));
 
         if ($result['success']) {
             if ($remember) {
