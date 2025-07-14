@@ -7,7 +7,7 @@
     </button>
     <div class="navbar-nav ms-auto">
         <div class="nav-item text-nowrap px-3">
-            <span class="text-white me-2"><?= $_SESSION['admin_email'] ?></span>
+            <span class="text-white me-2"><?= $_SESSION['admin_email'] ?? "Not Admin"  ?></span>
             <a class="btn btn-sm btn-outline-light" href="/ticket/admin/logout.php">Sign out</a>
         </div>
     </div>

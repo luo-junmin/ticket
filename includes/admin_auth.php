@@ -18,7 +18,7 @@ define('ADMIN_ROLE', 'admin');
 // 检查用户是否已登录
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['login_redirect'] = $_SERVER['REQUEST_URI'];
-    header("Location: /login.php?redirect=/admin/");
+    header("Location: /ticket/login.php?redirect=/admin/");
     exit;
 }
 
@@ -28,7 +28,7 @@ $user = (new User())->getUserById($_SESSION['user_id']);
 // 检查用户是否存在
 if (!$user) {
     session_destroy();
-    header("Location: /login.php?error=invalid_user");
+    header("Location:/ticket /login.php?error=invalid_user");
     exit;
 }
 
@@ -39,7 +39,7 @@ if ($user['role'] !== ADMIN_ROLE) {
         <div style='text-align:center; padding:50px;'>
             <h1>403 Access Denied</h1>
             <p>You don't have permission to access this page.</p>
-            <a href='/'>Return to Homepage</a>
+            <a href='/ticket/'>Return to Homepage</a>
         </div>
     ");
 }
