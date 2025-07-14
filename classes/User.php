@@ -172,26 +172,27 @@ class User {
         return ['success' => true];
     }
 
-    // classes/User.php 中应包含的方法
+    // Call by admin/user/add.php
     public function createUser($data) {
         // 密码哈希处理
-//        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-//
-//        $data = array(
-//            ':name' => $data['name'],
-//            ':email' => $data['email'],
-//            ':password' => $hashedPassword,
-//            ':role' => $data['role'],
-//            ':phone' => $data['phone']
-//        );
-//
-//        $sql = "INSERT INTO users (name, email, password, role, phone, created_at)
-//            VALUES (:name, :email, :password, :role, :phone, NOW())";
-//
-//        $stmt = $this->pdo->prepare($sql);
-//        return $stmt->execute($data);
+        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
 
-        return $this->register($data['email'], $data['password'], $data['name'], $data['phone']);
+        $data = array(
+            ':name' => $data['name'],
+            ':email' => $data['email'],
+            ':password' => $hashedPassword,
+            ':role' => $data['role'],
+            ':phone' => $data['phone'],
+            'is_verified' => $data['is_verified']
+        );
+
+        $sql = "INSERT INTO users (name, email, password, role, phone, is_verified, created_at)
+            VALUES (:name, :email, :password, :role, :phone, :is_verified, NOW())";
+
+        $stmt = $this->pdo->prepare($sql);
+        return $stmt->execute($data);
+
+//        return $this->register($data['email'], $data['password'], $data['name'], $data['phone']);
     }
 
     public function getUserOrders($userId) {

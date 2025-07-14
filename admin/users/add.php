@@ -39,7 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'email' => $email,
             'password' => $password,
             'role' => $role,
-            'phone' => $phone
+            'phone' => $phone,
+            'is_verified' => 1
         ]);
 
         if ($result) {

@@ -165,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/logout.php">
+                    <a class="nav-link" href="/ticket/logout.php">
                         <i class="bi bi-box-arrow-right me-2"></i>
                         <?= $lang->get('logout') ?>
                     </a>
