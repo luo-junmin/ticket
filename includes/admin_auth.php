@@ -28,7 +28,7 @@ $user = (new User())->getUserById($_SESSION['user_id']);
 // 检查用户是否存在
 if (!$user) {
     session_destroy();
-    header("Location:/ticket /login.php?error=invalid_user");
+    header("Location:/ticket/login.php?error=invalid_user");
     exit;
 }
 
@@ -49,7 +49,7 @@ $inactive = 36000; // 30分钟无操作超时
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $inactive)) {
     session_unset();
     session_destroy();
-    header("Location: /login.php?error=session_timeout");
+    header("Location: /ticket/login.php?error=session_timeout");
     exit;
 }
 $_SESSION['last_activity'] = time();
