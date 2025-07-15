@@ -169,10 +169,10 @@ class Ticket {
         $tickets = $this->getTicketsByOrder($orderId);
         if (empty($tickets)) return false;
 
-        $eventTitle = $tickets[0]['title'];
-        $eventDate = date('Y-m-d H:i', strtotime($tickets[0]['event_date']));
-        $location = $tickets[0]['location'];
-        $qr_code_path = $tickets[0]['qr_code_path'];
+//        $eventTitle = $tickets[0]['title'];
+//        $eventDate = date('Y-m-d H:i', strtotime($tickets[0]['event_date']));
+//        $location = $tickets[0]['location'];
+//        $qr_code_path = $tickets[0]['qr_code_path'];
         $ticketCount = count($tickets);
 
 
@@ -202,26 +202,56 @@ class Ticket {
             $mail->isHTML(true);
             $mail->Subject = $this->lang->get('ticket_confirmation') . ' - Order #' . $orderId;
 
+//            $mail->Body = "
+//                <h1>" . $this->lang->get('thank_you') . "</h1>
+//                <p>" . $this->lang->get('order_confirmed') . " #$orderId.</p>
+//
+//                <h2>" . $this->lang->get('event_details') . "</h2>
+//                <p><strong>" . $this->lang->get('event') . ":</strong> $eventTitle</p>
+//                <p><strong>" . $this->lang->get('date') . ":</strong> $eventDate</p>
+//                <p><strong>" . $this->lang->get('location') . ":</strong> $location</p>
+//                <p><strong>" . $this->lang->get('ticket_count') . ":</strong> $ticketCount</p>
+//                <h2>" . $this->lang->get('your_tickets') . "</h2>
+//
+//                <p>" . $this->lang->get('your_ticket_qr_code') . "</p>
+//                <img src='cid:ticket_qr' alt='Ticket QR Code' style='border:1px solid #ddd; padding:10px; background:#fff;'>
+//                <p>" . $this->lang->get('ticket_attachment') . "</p>
+//                <p>" . $this->lang->get('contact_support') . "</p>
+//            ";
+//
+//            // 嵌入二维码图片到邮件正文
+//            $mail->addEmbeddedImage($_SERVER['DOCUMENT_ROOT'] . PUBLIC_PATH . $qr_code_path, 'ticket_qr');
+
             $mail->Body = "
                 <h1>" . $this->lang->get('thank_you') . "</h1>
-                <p>" . $this->lang->get('order_confirmed') . " #$orderId.</p>
-                
+                <p>" . $this->lang->get('order_confirmed') . " #$orderId.</p>               
+                <p><strong>" . $this->lang->get('ticket_count') . ":</strong> $ticketCount</p>               
                 <h2>" . $this->lang->get('event_details') . "</h2>
-                <p><strong>" . $this->lang->get('event') . ":</strong> $eventTitle</p>
-                <p><strong>" . $this->lang->get('date') . ":</strong> $eventDate</p>
-                <p><strong>" . $this->lang->get('location') . ":</strong> $location</p>
-                <p><strong>" . $this->lang->get('ticket_count') . ":</strong> $ticketCount</p>
-                
-                <h2>" . $this->lang->get('your_tickets') . "</h2>
+                ";
+            $temp = "";
+            foreach ($tickets as $ticket) {
+                $eventDate = date('Y-m-d H:i', strtotime($ticket['event_date']));
+                $qr_code_path = $ticket['qr_code_path'];
 
+                $temp .= "                
+                <p><strong>" . $this->lang->get('event') . ":</strong>". $ticket['title'] ."</p>
+                <p><strong>" . $this->lang->get('date') . ":</strong>". $eventDate ." </p>
+                <p><strong>" . $this->lang->get('location') . ":</strong>". $ticket['location'] ." </p>
+                <h2>" . $this->lang->get('your_tickets') . "</h2>
+                <p><strong>" . $this->lang->get('ticket_code') . ":</strong>". $ticket['ticket_code'] ."  </p>
                 <p>" . $this->lang->get('your_ticket_qr_code') . "</p>
                 <img src='cid:ticket_qr' alt='Ticket QR Code' style='border:1px solid #ddd; padding:10px; background:#fff;'>
+                ";
+                // 嵌入二维码图片到邮件正文
+                $mail->addEmbeddedImage($_SERVER['DOCUMENT_ROOT'] . PUBLIC_PATH . $qr_code_path, 'ticket_qr');
+            }
+
+            $mail->Body .= $temp;
+            $mail->Body .= "
                 <p>" . $this->lang->get('ticket_attachment') . "</p>
                 <p>" . $this->lang->get('contact_support') . "</p>
             ";
 
-        // 7. 嵌入二维码图片到邮件正文
-        $mail->addEmbeddedImage($_SERVER['DOCUMENT_ROOT'] . PUBLIC_PATH . $qr_code_path, 'ticket_qr');
 
             // Attach PDF
             $mail->addAttachment($pdfPath, 'Tickets_Order_' . $orderId . '.pdf');

@@ -170,7 +170,6 @@ return [
     'total' => 'Total',
     'currency_symbol' => '$',
 
-
     'footer_description' => 'Your premier destination for event tickets and experiences. <br>Find the best events in your city.',
     'thank_you' => 'Thank you for your purchase!',
     'order_confirmed' => 'Order Confirmed',
@@ -184,4 +183,6 @@ return [
     'view_tickets' => 'View Tickets',
     'ticket' => 'Ticket',
     'print_tickets' => 'Print Ticket',
+
+    'event_details' => 'Event Details',
 ];

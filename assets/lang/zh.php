@@ -194,6 +194,9 @@ return [
     'inspect' => '验票',
     'view_tickets' => '查看票务',
     'ticket' => '票',
-    'print_tickets' => '打印票据'
+    'print_tickets' => '打印票据',
+
+    'event_details' => '活动详情',
+
 
 ];
