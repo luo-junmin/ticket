@@ -3,35 +3,71 @@
 // 在admin_header.php中添加
 //header("Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline';");
 
-function time_elapsed_string($datetime, $full = false)
-{
+//function time_elapsed_string($datetime, $full = false)
+//{
+//    $now = new DateTime;
+//    $ago = new DateTime($datetime);
+//    $diff = $now->diff($ago);
+//
+//    $diff->w = floor($diff->d / 7);
+//    $diff->d -= $diff->w * 7;
+//
+//    $string = array(
+//        'y' => 'year',
+//        'm' => 'month',
+//        'w' => 'week',
+//        'd' => 'day',
+//        'h' => 'hour',
+//        'i' => 'minute',
+//        's' => 'second',
+//    );
+//
+//    foreach ($string as $k => &$v) {
+//        if ($diff->$k) {
+//            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+//        } else {
+//            unset($string[$k]);
+//        }
+//    }
+//
+//    if (!$full) $string = array_slice($string, 0, 1);
+//    return $string ? implode(', ', $string) . ' ago' : 'just now';
+//}
+
+function time_elapsed_string($datetime, $full = false) {
     $now = new DateTime;
     $ago = new DateTime($datetime);
     $diff = $now->diff($ago);
 
-    $diff->w = floor($diff->d / 7);
-    $diff->d -= $diff->w * 7;
+    // 计算周数而不使用动态属性
+    $weeks = floor($diff->d / 7);
+    $days = $diff->d % 7;
 
-    $string = array(
-        'y' => 'year',
-        'm' => 'month',
-        'w' => 'week',
-        'd' => 'day',
-        'h' => 'hour',
-        'i' => 'minute',
-        's' => 'second',
-    );
+    $string = [
+        'y' => ['value' => $diff->y, 'unit' => 'year'],
+        'm' => ['value' => $diff->m, 'unit' => 'month'],
+        'w' => ['value' => $weeks, 'unit' => 'week'],
+        'd' => ['value' => $days, 'unit' => 'day'],
+        'h' => ['value' => $diff->h, 'unit' => 'hour'],
+        'i' => ['value' => $diff->i, 'unit' => 'minute'],
+        's' => ['value' => $diff->s, 'unit' => 'second']
+    ];
 
-    foreach ($string as $k => &$v) {
-        if ($diff->$k) {
-            $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
-        } else {
-            unset($string[$k]);
-        }
+    // 过滤掉值为0的时间单位
+    $string = array_filter($string, function($item) {
+        return $item['value'] > 0;
+    });
+
+    // 格式化每个时间单位
+    $formatted = array_map(function($item) {
+        return $item['value'] . ' ' . $item['unit'] . ($item['value'] > 1 ? 's' : '');
+    }, $string);
+
+    if (!$full && !empty($formatted)) {
+        $formatted = [reset($formatted)]; // 只取第一个元素
     }
 
-    if (!$full) $string = array_slice($string, 0, 1);
-    return $string ? implode(', ', $string) . ' ago' : 'just now';
+    return $formatted ? implode(', ', $formatted) . ' ago' : 'just now';
 }
 
 ?>
