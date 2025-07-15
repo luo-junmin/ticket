@@ -65,7 +65,7 @@ $pendingPaymentsCount = $payment->getPendingPaymentsCount();
                 <div class="col-md-3">
                     <div class="card text-white bg-warning mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">Pending Payments</h5>
+                            <h5 class="card-title">Pending Approval</h5>
                             <p class="card-text display-4"><?= $pendingPaymentsCount ?></p>
                             <a href="payment_review.php" class="text-white">Review now</a>
                         </div>
@@ -115,7 +115,7 @@ $pendingPaymentsCount = $payment->getPendingPaymentsCount();
                 <div class="col-md-4">
                     <div class="card">
                         <div class="card-header bg-warning text-white">
-                            <h5>Pending Payments</h5>
+                            <h5>Pending Approval</h5>
                         </div>
                         <div class="card-body">
                             <?php if ($pendingPaymentsCount > 0): ?>
