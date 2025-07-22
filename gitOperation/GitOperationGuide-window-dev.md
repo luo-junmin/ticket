@@ -1,5 +1,3 @@
-Git 多分支协作开发详细操作指南
-
 在 Git 多分支协作开发中（主分支 `master` + 多个功能分支如 `deepin-dev`/`windows-dev`/`other-dev`），需遵循标准化流程以保证代码安全性和可追溯性。以下是详细操作指南：
 
 ---
@@ -35,10 +33,10 @@ git rebase origin/master     # 再次变基（确保无冲突）
 
 #### 5. **推送到远程分支**
 ```bash
-git push origin deepin-dev   # 推送到同名远程分支
+git push origin windows-dev   # 推送到同名远程分支
 ```
 > ⚠️ 如果已推送过需强制更新（慎用）：  
-> `git push --force-with-lease origin deepin-dev`
+> `git push --force-with-lease origin windows-dev`
 
 ---
 
@@ -47,7 +45,7 @@ git push origin deepin-dev   # 推送到同名远程分支
 #### 1. **本地验证分支**
 ```bash
 git checkout master
-git merge --no-ff deepin-dev  # 非快进合并（保留分支历史）
+git merge --no-ff windows-dev  # 非快进合并（保留分支历史）
 ```
 > 🔍 测试合并后代码是否正常运行！
 
@@ -57,7 +55,7 @@ git push origin master       # 直接推送（小型团队）
 ```
 或更安全的 **GitHub/GitLab 流程：  
 1. 在仓库页面发起 **Pull Request (PR)**  
-2. 指定 `base: master` ← `compare: deepin-dev`  
+2. 指定 `base: master` ← `compare: windows-dev`  
 3. 通过代码审查后点击 **Merge**
 
 ---
@@ -102,25 +100,25 @@ gitGraph
 ---
 
 ### **四、完整工作流示例**
-#### 场景：在 `deepin-dev` 开发新功能后合并到 `master`
+#### 场景：在 `windows-dev` 开发新功能后合并到 `master`
 ```bash
 # 1. 同步主分支
 git checkout master
 git pull origin master
 
 # 2. 更新开发分支
-git checkout deepin-dev
+git checkout windows-dev
 git rebase master
 
 # 3. 开发完成后推送
 git add .
 git commit -m "添加用户登录功能"
-git push origin deepin-dev
+git push origin windows-dev
 
 # 4. 在GitHub创建PR，审核后合并
 # （或本地合并后推送）
 git checkout master
-git merge --no-ff deepin-dev
+git merge --no-ff windows-dev
 git push origin master
 ```
 
