@@ -43,6 +43,8 @@ class Order {
             $where[] = "o.payment_status = :status";
             $params[':status'] = $statusFilter;
         }
+        $where[] = "o.is_deleted = :is_deleted";
+        $params[':is_deleted'] = 0;
 
         // 组合WHERE条件
         if (!empty($where)) {
@@ -69,7 +71,7 @@ class Order {
                 $paramType = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
                 $stmt->bindValue($key, $value, $paramType);
             }
-
+trigger_error($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {

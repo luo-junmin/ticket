@@ -23,7 +23,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link <?= strpos($_SERVER['REQUEST_URI'], '/admin/orders/') !== false ? 'active' : '' ?>" href="/ticket/admin/orders">
+                <a class="nav-link <?= strpos($_SERVER['REQUEST_URI'], '/admin/orders/') !== false ? 'active' : '' ?>" href="/ticket/admin/orders/orders.php">
                     <i class="bi bi-receipt me-2"></i>
                     Orders
                 </a>

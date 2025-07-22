@@ -25,10 +25,22 @@ $statusCounts = $order->getOrderStatusCounts();
 $pageTitle = "Manage Orders";
 include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php';
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders | <?= SITE_NAME ?></title>
+    <?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php'; ?>
+</head>
+<body>
+<?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_navbar.php'; ?>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12">
+        <?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_sidebar.php'; ?>
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+<!--        <div class="col-md-12">-->
             <h1 class="mt-4"><?= htmlspecialchars($pageTitle) ?></h1>
 
             <?php if (isset($_GET['success'])): ?>
@@ -103,7 +115,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php';
                             <?php else: ?>
                                 <?php foreach ($orders as $orderItem): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($orderItem['order_number']) ?></td>
+                                        <td><?= htmlspecialchars($orderItem['order_id']) ?></td>
                                         <td><?= htmlspecialchars($orderItem['customer_name']) ?></td>
                                         <td><?= date('M j, Y H:i', strtotime($orderItem['created_at'])) ?></td>
                                         <td><?= $orderItem['ticket_count'] ?></td>
@@ -123,6 +135,9 @@ include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php';
                                             <button class="btn btn-sm btn-danger delete-order" data-id="<?= $orderItem['order_id'] ?>" title="Delete">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
+                                            <a href="delete.php?id=<?= $orderItem['order_id'] ?>" class="btn btn-sm btn-danger delete-order" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -163,7 +178,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php';
                     <?php endif; ?>
                 </div>
             </div>
-        </div>
+        </main>
+<!--        </div>-->
     </div>
 </div>
 
@@ -186,7 +202,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/../../includes/admin_footer.php'; ?>
+<?php //include __DIR__ . '/../../includes/admin_footer.php'; ?>
 
 <script>
     // Delete order confirmation
@@ -220,3 +236,7 @@ function getStatusColor($status) {
     }
 }
 ?>
+
+<?php include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_footer.php'; ?>
+</body>
+</html>

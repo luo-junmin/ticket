@@ -24,7 +24,7 @@ $orders = $order->getAllOrders();
 $statusFilter = $_GET['status'] ?? '';
 if ($statusFilter) {
     $orders = array_filter($orders, function($order) use ($statusFilter) {
-        return $order['payment_status'] === $statusFilter;
+        return $order['status'] === $statusFilter;
     });
 }
 
