@@ -12,7 +12,7 @@ git pull origin master       # 拉取远程最新代码
 
 #### 2. **切换到开发分支**
 ```bash
-git checkout deepin-dev      # 进入你的开发分支
+git checkout windows-dev      # 进入你的开发分支
 git rebase master            # 将主分支最新代码变基到当前分支
 ```
 > 📌 **为什么用 `rebase` 而不是 `merge`？**  
