@@ -135,9 +135,9 @@ include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php';
                                             <button class="btn btn-sm btn-danger delete-order" data-id="<?= $orderItem['order_id'] ?>" title="Delete">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
-                                            <a href="delete.php?id=<?= $orderItem['order_id'] ?>" class="btn btn-sm btn-danger delete-order" title="Delete">
-                                                <i class="fas fa-trash-alt"></i>
-                                            </a>
+//                                             <a href="delete.php?id=<?= $orderItem['order_id'] ?>" class="btn btn-sm btn-danger delete-order" title="Delete">
+//                                                 <i class="fas fa-trash-alt"></i>
+//                                             </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
