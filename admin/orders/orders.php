@@ -129,7 +129,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] .'/ticket/includes/admin_header.php';
                                             <a href="edit.php?id=<?= $orderItem['order_id'] ?>" class="btn btn-sm btn-primary" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="view.php?id=<?= $orderItem['order_id'] ?>" class="btn btn-sm btn-info" title="View">
+                                            <a href="view.php?id=<?= $orderItem['order_id'] ?>" class="btn btn-sm btn-info" title="View"  target="detail">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <button class="btn btn-sm btn-danger delete-order" data-id="<?= $orderItem['order_id'] ?>" title="Delete">
